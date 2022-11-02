@@ -3,15 +3,12 @@ import {
   Card,
   CardContent,
   Typography,
-  TextField,
-  Button,
 } from "@mui/material"
 import { grey } from "@mui/material/colors"
 import React from "react"
+import Form from "./components/Form"
 
 const Login = () => {
-  const [email, setEmail] = React.useState("")
-  const [password, setPassword] = React.useState("")
 
   return (
     <>
@@ -58,47 +55,7 @@ const Login = () => {
                 input: { color: "black !important" },
               }}
             >
-              <TextField
-                label="E-mail"
-                type="email"
-                sx={{ width: "100%" }}
-                variant="outlined"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <br />
-              <TextField
-                label="Password"
-                sx={{
-                  width: "100%",
-                  mt: "20px",
-                  input: { color: "black !important" },
-                }}
-                type="password"
-                value={password}
-                variant="outlined"
-                autoComplete={false}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <br />
-
-              <CardContent sx={{ textAlign: "left", p: 0, mt: "10px" }}>
-                <Button variant="text" size="small">
-                  Forgot Password?
-                </Button>
-              </CardContent>
-
-              <Button
-                variant="contained"
-                sx={{
-                  mt: "50px",
-                  width: "100%",
-                  borderRadius: "30px",
-                  height: "50px",
-                }}
-              >
-                Sign in
-              </Button>
+              <Form />
             </CardContent>
           </Card>
         </Grid>
