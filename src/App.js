@@ -50,7 +50,7 @@ function App(props) {
             onClick={handleDrawerToggle}
           >
             <ListItemIcon>
-              <DashboardIcon />
+              <DashboardIcon color={pathname === "/" ? "primary" : ''}/>
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
@@ -64,7 +64,7 @@ function App(props) {
             onClick={handleDrawerToggle}
           >
             <ListItemIcon>
-              <SchoolRoundedIcon />
+              <SchoolRoundedIcon color={pathname === "/students" ? "primary" : ''}/>
             </ListItemIcon>
             <ListItemText primary="Students" />
           </ListItemButton>
@@ -78,7 +78,7 @@ function App(props) {
             selected={pathname === "/instructors"}
           >
             <ListItemIcon>
-              <AccountCircleRoundedIcon />
+              <AccountCircleRoundedIcon color={pathname === "/instructors" ? "primary" : ''}/>
             </ListItemIcon>
             <ListItemText primary="Instructors" />
           </ListItemButton>
@@ -92,7 +92,7 @@ function App(props) {
             selected={pathname === "/schedules"}
           >
             <ListItemIcon>
-              <CalendarMonthRoundedIcon />
+              <CalendarMonthRoundedIcon color={pathname === "/schedules" ? "primary" : ''}/>
             </ListItemIcon>
 
             <ListItemText primary="Schedules" />
@@ -125,7 +125,7 @@ function App(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{pointerEvents: 'none'}}>
             Driving School Management System
           </Typography>
         </Toolbar>
