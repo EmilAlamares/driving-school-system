@@ -7,22 +7,21 @@ import { Link } from "react-router-dom"
 const cardStyles = {
   width: "250px",
   height: "100px",
-  margin: "20px",
-  textDecoration: 'none',
+  textDecoration: "none",
+}
+
+const cardContentStyles = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-around",
 }
 
 const totalStudents = (
   <>
-    <CardContent
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-around",
-      }}
-    >
+    <CardContent sx={cardContentStyles}>
       <Typography variant="h6">
         Students
-        <Typography sx={{ fontSize: "14px" }}>127</Typography>
+        <Typography>127</Typography>
       </Typography>
       <Avatar sx={{ bgcolor: "orange" }}>
         <SchoolRoundedIcon />
@@ -34,15 +33,11 @@ const totalStudents = (
 const totalInstructors = (
   <>
     <CardContent
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-around",
-      }}
+      sx={cardContentStyles}
     >
       <Typography variant="h6">
         Instructors
-        <Typography sx={{ fontSize: "14px" }}>89</Typography>
+        <Typography>89</Typography>
       </Typography>
       <Avatar sx={{ bgcolor: "#1976d2" }}>
         <AccountCircleRoundedIcon />
@@ -54,15 +49,11 @@ const totalInstructors = (
 const todaySession = (
   <>
     <CardContent
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-around",
-      }}
+      sx={cardContentStyles}
     >
       <Typography variant="h6">
         Today's Session
-        <Typography sx={{ fontSize: "14px" }}>25</Typography>
+        <Typography>25</Typography>
       </Typography>
       <Avatar sx={{ bgcolor: "#8C7B69" }}>
         <CalendarMonthRoundedIcon />
@@ -77,10 +68,20 @@ const Dashboard = () => {
       <Card variant="outlined" sx={cardStyles} component={Link} to="/students">
         {totalStudents}
       </Card>
-      <Card variant="outlined" sx={cardStyles} component={Link} to="/instructors">
+      <Card
+        variant="outlined"
+        sx={{ ...cardStyles, marginLeft: "20px" }}
+        component={Link}
+        to="/instructors"
+      >
         {totalInstructors}
       </Card>
-      <Card variant="outlined" sx={cardStyles} component={Link} to="/schedules">
+      <Card
+        variant="outlined"
+        sx={{ ...cardStyles, marginLeft: "20px" }}
+        component={Link}
+        to="/schedules"
+      >
         {todaySession}
       </Card>
     </Box>
