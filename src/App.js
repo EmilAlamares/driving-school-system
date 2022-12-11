@@ -1,5 +1,4 @@
 import * as React from "react"
-import PropTypes from "prop-types"
 import AppBar from "@mui/material/AppBar"
 import Box from "@mui/material/Box"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -25,6 +24,8 @@ import Instructors from "./pages/Instructors"
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import AccountMenu from "./components/AccountMenu"
+import BranchMenu from "./components/BranchMenu"
 
 const drawerWidth = 240
 
@@ -128,6 +129,9 @@ function App(props) {
           <Typography variant="h6" noWrap component="div" sx={{pointerEvents: 'none'}}>
             Driving School Management System
           </Typography>
+          
+          <BranchMenu />
+          <AccountMenu />
         </Toolbar>
       </AppBar>
       <Box
@@ -187,14 +191,6 @@ function App(props) {
       </Box>
     </Box>
   )
-}
-
-App.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window: PropTypes.func,
 }
 
 export default App
