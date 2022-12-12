@@ -38,7 +38,7 @@ const Students = () => {
             In Session
             <Typography>46</Typography>
           </Typography>
-          <Avatar sx={{ bgcolor: "#1976d2" }}>
+          <Avatar sx={{ bgcolor: "#8C7B69" }}>
             <AccessTimeFilled />
           </Avatar>
         </CardContent>

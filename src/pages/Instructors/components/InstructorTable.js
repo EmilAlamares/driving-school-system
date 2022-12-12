@@ -10,74 +10,68 @@ import TableRow from "@mui/material/TableRow"
 import Paper from "@mui/material/Paper"
 
 export default function StudentTable() {
-  function createData(name, branch, instructor, selectedPackage, status) {
-    return { name, branch, instructor, selectedPackage, status }
+  function createData(name, branch, student, status) {
+    return { name, branch, student, status }
   }
 
-  const rows = [
+  let rows = [
     createData(
       "John Emanuel Alamares",
       "Caloocan",
       "Ariel Dela Cruz",
-      "Package A",
       "In Session"
     ),
-    createData("Karen Castro", "Taguig", "Jane Doe", "Package B", "In Session"),
+    createData("Karen Castro", "Taguig", "Jane Doe", "In Session"),
     createData(
       "Jaygee Olayta",
       "Cavite",
       "Gus Fring",
-      "Package D",
       "To Be Scheduled"
     ),
     createData(
       "John Rey Domondon",
       "Makati",
       "John Doe",
-      "Package A",
       "In Session"
     ),
     createData(
       "Mark Francis Calisay",
       "Makati",
       "Jesse Pinkman",
-      "Package C",
       "To Be Scheduled"
     ),
     createData(
       "Eren Yeager",
       "Caloocan",
       "Shane Lopez",
-      "Package E",
       "To Be Scheduled"
     ),
-    createData("Karen Castro", "Taguig", "Jane Doe", "Package B", "To Be Scheduled"),
+    createData("Karen Castro", "Taguig", "Jane Doe", "To Be Scheduled"),
     createData(
       "Jaygee Olayta",
       "Cavite",
       "Gus Fring",
-      "Package D",
       "In Session"
     ),
     createData(
       "Skyler White",
       "Taguig",
       "Walter White",
-      "Package C",
       "To Be Scheduled"
     ),
     createData(
       "Mike Ehrmantraut",
       "Cavite",
       "Jesse Pinkman",
-      "Package C",
       "In Session"
     ),
   ]
 
+  rows = rows.reverse()
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "orange",
+      backgroundColor: "#1976d2",
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -114,8 +108,7 @@ export default function StudentTable() {
           <StyledTableRow>
             <StyledTableCell align="left">Full name</StyledTableCell>
             <StyledTableCell align="left">Branch</StyledTableCell>
-            <StyledTableCell align="left">Instructor</StyledTableCell>
-            <StyledTableCell align="left">Package</StyledTableCell>
+            <StyledTableCell align="left">Student</StyledTableCell>
             <StyledTableCell align="left">Status</StyledTableCell>
           </StyledTableRow>
         </TableHead>
@@ -127,12 +120,11 @@ export default function StudentTable() {
             .map((row, index) => {
               return (
                 <StyledTableRow tabIndex={-1} key={row.name}>
-                  <StyledTableCell component="th" scope="row"  width="300px">
+                  <StyledTableCell component="th" scope="row"  width="200px">
                     {row.name}
                   </StyledTableCell>
                   <StyledTableCell align="left" width="200px">{row.branch}</StyledTableCell>
-                  <StyledTableCell align="left" width="200px">{row.instructor}</StyledTableCell>
-                  <StyledTableCell align="left" width="200px">{row.selectedPackage}</StyledTableCell>
+                  <StyledTableCell align="left" width="200px">{row.student}</StyledTableCell>
                   <StyledTableCell align="left" width="200px">{row.status}</StyledTableCell>
                 </StyledTableRow>
               )
