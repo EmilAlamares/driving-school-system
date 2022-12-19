@@ -14,7 +14,6 @@ import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
 
 import { visuallyHidden } from "@mui/utils"
-import { Divider } from "@mui/material"
 
 function createData(id, name, branch, student, status) {
   return { id, name, branch, student, status }

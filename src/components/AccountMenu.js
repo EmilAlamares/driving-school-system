@@ -27,8 +27,8 @@ const AccountMenu = () => {
         onClose={handleClose}
         sx={{ mt: "5px" }}
       >
-        <MenuItem>Account Settings</MenuItem>
-        <MenuItem>Log Out</MenuItem>
+        <MenuItem onClick={handleClose}>Account Settings</MenuItem>
+        <MenuItem onClick={handleClose}>Log Out</MenuItem>
       </Menu>
     </>
   )

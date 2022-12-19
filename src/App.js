@@ -21,11 +21,13 @@ import Dashboard from "./pages/Dashboard"
 import Students from "./pages/Students"
 import Schedules from "./pages/Schedules"
 import Instructors from "./pages/Instructors"
+import Reports from "./pages/Reports"
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 import AccountMenu from "./components/AccountMenu"
 import BranchMenu from "./components/BranchMenu"
+import InsertChartIcon from '@mui/icons-material/InsertChart';
 
 const drawerWidth = 240
 
@@ -97,6 +99,23 @@ function App(props) {
             </ListItemIcon>
 
             <ListItemText primary="Schedules" />
+          </ListItemButton>
+        </ListItem>
+
+        <Divider />
+
+        <ListItem key="Reports" disablePadding>
+          <ListItemButton
+            component={Link}
+            to="/reports"
+            onClick={handleDrawerToggle}
+            selected={pathname === "/reports"}
+          >
+            <ListItemIcon>
+              <InsertChartIcon color={pathname === "/reports" ? "primary" : ''}/>
+            </ListItemIcon>
+
+            <ListItemText primary="Reports" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -187,6 +206,7 @@ function App(props) {
           <Route path="students" element={<Students />} />
           <Route path="/instructors" element={<Instructors />} />
           <Route path="/schedules" element={<Schedules />} />
+          <Route path="/reports" element={<Reports />} />
         </Routes>
       </Box>
     </Box>
