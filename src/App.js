@@ -22,12 +22,14 @@ import Students from "./pages/Students"
 import Schedules from "./pages/Schedules"
 import Instructors from "./pages/Instructors"
 import Reports from "./pages/Reports"
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
-import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import Branches from "./pages/Branches"
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded"
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded"
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded"
 import AccountMenu from "./components/AccountMenu"
 import BranchMenu from "./components/BranchMenu"
-import InsertChartIcon from '@mui/icons-material/InsertChart';
+import InsertChartIcon from "@mui/icons-material/InsertChart"
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const drawerWidth = 240
 
@@ -53,7 +55,7 @@ function App(props) {
             onClick={handleDrawerToggle}
           >
             <ListItemIcon>
-              <DashboardIcon color={pathname === "/" ? "primary" : ''}/>
+              <DashboardIcon color={pathname === "/" ? "primary" : ""} />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
@@ -67,7 +69,9 @@ function App(props) {
             onClick={handleDrawerToggle}
           >
             <ListItemIcon>
-              <SchoolRoundedIcon color={pathname === "/students" ? "primary" : ''}/>
+              <SchoolRoundedIcon
+                color={pathname === "/students" ? "primary" : ""}
+              />
             </ListItemIcon>
             <ListItemText primary="Students" />
           </ListItemButton>
@@ -81,7 +85,9 @@ function App(props) {
             selected={pathname === "/instructors"}
           >
             <ListItemIcon>
-              <AccountCircleRoundedIcon color={pathname === "/instructors" ? "primary" : ''}/>
+              <AccountCircleRoundedIcon
+                color={pathname === "/instructors" ? "primary" : ""}
+              />
             </ListItemIcon>
             <ListItemText primary="Instructors" />
           </ListItemButton>
@@ -95,7 +101,9 @@ function App(props) {
             selected={pathname === "/schedules"}
           >
             <ListItemIcon>
-              <CalendarMonthRoundedIcon color={pathname === "/schedules" ? "primary" : ''}/>
+              <CalendarMonthRoundedIcon
+                color={pathname === "/schedules" ? "primary" : ""}
+              />
             </ListItemIcon>
 
             <ListItemText primary="Schedules" />
@@ -103,6 +111,23 @@ function App(props) {
         </ListItem>
 
         <Divider />
+
+        <ListItem key="Branches" disablePadding>
+          <ListItemButton
+            component={Link}
+            to="/branches"
+            onClick={handleDrawerToggle}
+            selected={pathname === "/branches"}
+          >
+            <ListItemIcon>
+              <LocationOnIcon
+                color={pathname === "/branches" ? "primary" : ""}
+              />
+            </ListItemIcon>
+
+            <ListItemText primary="Branches" />
+          </ListItemButton>
+        </ListItem>
 
         <ListItem key="Reports" disablePadding>
           <ListItemButton
@@ -112,7 +137,9 @@ function App(props) {
             selected={pathname === "/reports"}
           >
             <ListItemIcon>
-              <InsertChartIcon color={pathname === "/reports" ? "primary" : ''}/>
+              <InsertChartIcon
+                color={pathname === "/reports" ? "primary" : ""}
+              />
             </ListItemIcon>
 
             <ListItemText primary="Reports" />
@@ -145,10 +172,15 @@ function App(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{pointerEvents: 'none'}}>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ pointerEvents: "none" }}
+          >
             Driving School Management System
           </Typography>
-          
+
           <BranchMenu />
           <AccountMenu />
         </Toolbar>
@@ -207,6 +239,7 @@ function App(props) {
           <Route path="/instructors" element={<Instructors />} />
           <Route path="/schedules" element={<Schedules />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/branches" element={<Branches />} />
         </Routes>
       </Box>
     </Box>

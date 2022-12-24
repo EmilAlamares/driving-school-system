@@ -12,6 +12,7 @@ import TableSortLabel from "@mui/material/TableSortLabel"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
+import AddStudent from "./AddStudent"
 
 import { visuallyHidden } from "@mui/utils"
 
@@ -226,6 +227,7 @@ function EnhancedTableToolbar(props) {
           Students
         </Typography>
       )}
+      <AddStudent />
     </Toolbar>
   )
 }

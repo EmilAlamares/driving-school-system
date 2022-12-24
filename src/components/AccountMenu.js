@@ -1,7 +1,9 @@
 import { Avatar, Menu, MenuItem, IconButton } from "@mui/material"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const AccountMenu = () => {
+  let navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -11,6 +13,11 @@ const AccountMenu = () => {
 
   const handleClose = (e) => {
     setAnchorEl(null)
+  }
+
+  const handleLogout = (e) => {
+    setAnchorEl(null)
+    navigate('/login')
   }
 
   return (
@@ -28,7 +35,7 @@ const AccountMenu = () => {
         sx={{ mt: "5px" }}
       >
         <MenuItem onClick={handleClose}>Account Settings</MenuItem>
-        <MenuItem onClick={handleClose}>Log Out</MenuItem>
+        <MenuItem onClick={handleLogout}>Log Out</MenuItem>
       </Menu>
     </>
   )

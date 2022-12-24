@@ -21,7 +21,7 @@ const Students = () => {
       <Card variant="outlined" sx={{ display: "inline-block", width: 250 }}>
         <CardContent sx={cardContentStyles}>
           <Typography variant="h6">
-        Total Students
+            Total Students
             <Typography>127</Typography>
           </Typography>
           <Avatar sx={{ bgcolor: "orange" }}>
@@ -29,6 +29,7 @@ const Students = () => {
           </Avatar>
         </CardContent>
       </Card>
+
       <Card
         variant="outlined"
         sx={{ display: "inline-block", marginLeft: "20px", width: 250 }}
@@ -43,11 +44,12 @@ const Students = () => {
           </Avatar>
         </CardContent>
       </Card>
-      <Divider sx={{marginTop: '10px'}} />
 
-     <Box paddingTop={'10px'}>
-      <StudentTable />
-     </Box>
+      <Divider sx={{ marginTop: "10px" }} />
+
+      <Box paddingTop={"10px"}>
+        <StudentTable />
+      </Box>
     </Box>
   )
 }

@@ -12,6 +12,7 @@ import TableSortLabel from "@mui/material/TableSortLabel"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
+import AddInstructor from "./AddInstructor"
 
 import { visuallyHidden } from "@mui/utils"
 
@@ -161,8 +162,8 @@ function EnhancedTableToolbar(props) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         bgcolor: "#1976d2",
-        color: 'white',
-        borderRadius: '5px 5px 0 0'
+        color: "white",
+        borderRadius: "5px 5px 0 0",
       }}
     >
       {numSelected > 0 ? (
@@ -184,6 +185,7 @@ function EnhancedTableToolbar(props) {
           Instructors
         </Typography>
       )}
+              <AddInstructor />
     </Toolbar>
   )
 }
@@ -268,11 +270,7 @@ export default function EnhancedTable() {
                       key={row.id}
                       selected={isItemSelected}
                     >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                      >
+                      <TableCell component="th" id={labelId} scope="row">
                         {row.name}
                       </TableCell>
                       <TableCell align="left">{row.branch}</TableCell>

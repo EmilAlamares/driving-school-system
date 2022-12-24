@@ -3,9 +3,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import LoginIcon from '@mui/icons-material/Login';
 import React from 'react'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 
 const Form = () => {
-
+    let navigate = useNavigate()
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [loading, setLoading] = React.useState(false)
@@ -25,11 +26,13 @@ const Form = () => {
         password,
     }
 
-    const response = await axios.post(`${process.env.REACT_APP_URL}/login`, data)
+    // const response = await axios.post(`${process.env.REACT_APP_URL}/login`, data)
 
-    console.log(response)
-
+    
+    // console.log(response)
+    
     setTimeout(() => setLoading(false), 1000)
+    setTimeout(() => navigate('/'), 1000)
 
     }
   return (
