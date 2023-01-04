@@ -9,7 +9,10 @@ import TextField from "@mui/material/TextField"
 import Autocomplete from "@mui/material/Autocomplete"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
-import { Unstable_DateField as DateField } from "@mui/x-date-pickers/DateField"
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker"
+import { useState } from "react"
+import dayjs from "dayjs"
+import axios from "axios"
 
 const style = {
   position: "absolute",
@@ -25,17 +28,53 @@ const style = {
   p: "24px",
 }
 
-const branches = [
-  { id: 1, title: "Caloocan" },
-  { id: 2, title: "Taguig" },
-  { id: 3, title: "Cavite" },
-  { id: 4, title: "Makati" },
-]
-
 export default function AddInstructor() {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  // Form fields
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [middleName, setMiddleName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [gender, setGender] = useState("")
+  const [birthDate, setBirthDate] = useState(dayjs("2000-01-01"))
+  const [address, setAddress] = useState("")
+  const [contactNo, setContactNo] = useState("")
+  const [branches, setBranches] = useState("")
+  const type = "Instructor"
+
+  const handleChangeDate = (newDate) => {
+    setBirthDate(newDate)
+  }
+
+  const handleSubmit = async () => {
+    const data = {
+      email,
+      password,
+      passwordConfirm: confirmPassword,
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      birthDate,
+      address,
+      contactNo,
+      branches,
+      type,
+    }
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_URL}/users`,
+      data
+    )
+
+    console.log(response)
+    console.log(branches)
+  }
 
   return (
     <div>
@@ -73,75 +112,131 @@ export default function AddInstructor() {
               <Close />
             </IconButton>
           </Box>
-          <Divider sx={{ marginTop: "12px" }} />
+          <Divider sx={{ marginTop: "24px" }} />
 
-          <Box >
-            {/* Name, Address, Gender, Branch, Email, Contact no. */}
-            <TextField variant="standard" label="First Name" />
+          <Box display={"flex"} justifyContent={"space-around"}>
+            <TextField
+              variant="standard"
+              label="E-mail"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+            />
+            <TextField
+              variant="standard"
+              label="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              type="password"
+            />
+            <TextField
+              variant="standard"
+              label="Confirm Password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
+              type="password"
+            />
+          </Box>
+          <Divider sx={{ marginTop: "24px" }} />
+
+          <Box>
+            <TextField
+              variant="standard"
+              label="First Name"
+              onChange={(e) => setFirstName(e.target.value)}
+              value={firstName}
+            />
             <TextField
               variant="standard"
               label="Middle Name"
               sx={{ marginLeft: "12px" }}
+              onChange={(e) => setMiddleName(e.target.value)}
+              value={middleName}
             />
             <TextField
               variant="standard"
               label="Last Name"
               sx={{ marginLeft: "12px" }}
+              onChange={(e) => setLastName(e.target.value)}
+              value={lastName}
             />
           </Box>
 
-          <Box mt={"12px"} display={"flex"} justifyContent={'space-between'} gap={'12px'}>
-
+          <Box
+            mt={"12px"}
+            display={"flex"}
+            justifyContent={"space-between"}
+            gap={"12px"}
+          >
             <Autocomplete
               sx={{ width: "50%" }}
-              id="branches-select"
               options={["Male", "Female"]}
-              // getOptionLabel={(option) => option.title}
+              onChange={(e, newVal) => setGender(newVal)}
+              // value={gender}
               renderInput={(params) => (
                 <TextField {...params} label="Gender" variant="standard" />
               )}
             />
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateField
+              <DesktopDatePicker
                 label="Birthdate"
-                format="MM-DD-YYYY"
-                fullWidth
-                variant="standard"
-                sx={{ width: "50%" }}
+                inputFormat="MM-DD-YYYY"
+                onChange={handleChangeDate}
+                value={birthDate}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    sx={{ width: "50%" }}
+                  />
+                )}
               />
             </LocalizationProvider>
-
           </Box>
 
           <Box mt={"12px"}>
-            <TextField variant="standard" label="Address" fullWidth />
+            <TextField
+              variant="standard"
+              label="Address"
+              fullWidth
+              onChange={(e) => setAddress(e.target.value)}
+              value={address}
+            />
           </Box>
 
-          <Box mt={"12px"} display={"flex"} gap={'12px'}>
-            <TextField variant="standard" label="E-mail" fullWidth />
-            <TextField variant="standard" label="Contact No." fullWidth />
-          </Box>
-
-          <Box mt={"12px"}>
+          <Box mt={"12px"} display={"flex"} gap={"12px"}>
             <Autocomplete
+              fullWidth
               multiple
               id="branches-select"
-              options={branches}
-              getOptionLabel={(option) => option.title}
-              // filterSelectedOptions
+              options={["Caloocan", "Makati", "Taguig", "Cavite"]}
+              // value={branches}
+              onChange={(e, newVal) => setBranches(newVal)}
+              // getOptionLabel={(option) => option.title}
               renderInput={(params) => (
                 <TextField {...params} label="Branches" variant="standard" />
               )}
             />
+            <TextField
+              variant="standard"
+              label="Contact No."
+              // fullWidth
+              onChange={(e) => setContactNo(e.target.value)}
+              value={contactNo}
+            />
           </Box>
 
-          <Box textAlign={'right'} mt={'24px'}>
-            <Button variant="text" sx={{color: 'red'}} onClick={handleClose}>Close</Button>
-            <Button variant="text" sx={{color: 'orange'}}>Reset</Button>
-            <Button variant="text">Save</Button>
+          <Box textAlign={"right"} mt={"24px"}>
+            <Button variant="text" sx={{ color: "red" }} onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="text" sx={{ color: "orange" }}>
+              Reset
+            </Button>
+            <Button variant="text" onClick={() => handleSubmit()}>
+              Save
+            </Button>
           </Box>
-
         </Box>
       </Modal>
     </div>

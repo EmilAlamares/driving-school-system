@@ -1,40 +1,46 @@
 import { CardContent, TextField, Button } from "@mui/material"
-import LoadingButton from '@mui/lab/LoadingButton';
-import LoginIcon from '@mui/icons-material/Login';
-import React from 'react'
-import axios from 'axios'
-import { useNavigate } from "react-router-dom";
+import LoadingButton from "@mui/lab/LoadingButton"
+import LoginIcon from "@mui/icons-material/Login"
+import React from "react"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 const Form = () => {
-    let navigate = useNavigate()
-    const [email, setEmail] = React.useState("")
-    const [password, setPassword] = React.useState("")
-    const [loading, setLoading] = React.useState(false)
+  let navigate = useNavigate()
+  const [email, setEmail] = React.useState("")
+  const [password, setPassword] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
 
-    const buttonStyle = {
-        mt: "50px",
-        borderRadius: "30px",
-        height: "50px",
-    }
- 
-    const handleSubmit = async (e) => {
-    e.preventDefault();
+  const buttonStyle = {
+    mt: "50px",
+    borderRadius: "30px",
+    height: "50px",
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     setLoading(true)
 
     const data = {
-        email,
-        password,
+      email,
+      password,
     }
 
-    // const response = await axios.post(`${process.env.REACT_APP_URL}/login`, data)
+    const response = await axios.post(
+      `${process.env.REACT_APP_URL}/users/login`,
+      data
+    )
 
-    
-    // console.log(response)
-    
-    setTimeout(() => setLoading(false), 1000)
-    setTimeout(() => navigate('/'), 1000)
+    console.log(response)
 
+    if (response.data.message === "Success") {
+      setLoading(false)
+      navigate("/")
     }
+    else
+    setLoading(false)
+
+  }
   return (
     <form autoComplete="off" onSubmit={(e) => handleSubmit(e)}>
       <TextField
@@ -68,18 +74,17 @@ const Form = () => {
         </Button>
       </CardContent>
 
-        <LoadingButton
+      <LoadingButton
         loading={loading}
         fullWidth
         variant="contained"
         loadingPosition="end"
-        sx={ buttonStyle }
+        sx={buttonStyle}
         type="submit"
         endIcon={<LoginIcon />}
-        >
+      >
         Sign in
-        </LoadingButton>
-
+      </LoadingButton>
     </form>
   )
 }

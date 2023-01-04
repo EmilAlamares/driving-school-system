@@ -68,6 +68,7 @@ const todaySession = (
 )
 
 const Dashboard = () => {
+  // eslint-disable-next-line
   const [chartData, setChartData] = useState({
     labels: ["January", "February", "March", "April", "May", 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     datasets: [
