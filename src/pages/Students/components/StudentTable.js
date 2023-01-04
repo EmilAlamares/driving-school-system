@@ -13,73 +13,11 @@ import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
 import AddStudent from "./AddStudent"
+import LinearProgress from "@mui/material/LinearProgress"
+import { useState, useEffect } from "react"
+import axios from "axios"
 
 import { visuallyHidden } from "@mui/utils"
-
-function createData(name, branch, instructor, selectedPackage, status) {
-  return { name, branch, instructor, selectedPackage, status }
-}
-
-const rows = [
-  createData(
-    "John Emanuel Alamares",
-    "Caloocan",
-    "Ariel Dela Cruz",
-    "Package A",
-    "In Session"
-  ),
-  createData("Karen Castro", "Taguig", "Jane Doe", "Package B", "In Session"),
-  createData(
-    "Jaygee Olayta",
-    "Cavite",
-    "Gus Fring",
-    "Package D",
-    "To Be Scheduled"
-  ),
-  createData(
-    "John Rey Domondon",
-    "Makati",
-    "John Doe",
-    "Package A",
-    "In Session"
-  ),
-  createData(
-    "Mark Francis Calisay",
-    "Makati",
-    "Jesse Pinkman",
-    "Package C",
-    "To Be Scheduled"
-  ),
-  createData(
-    "Eren Yeager",
-    "Caloocan",
-    "Shane Lopez",
-    "Package E",
-    "To Be Scheduled"
-  ),
-  createData("Karen Castro", "Taguig", "Jane Doe", "Package B", "To Be Scheduled"),
-  createData(
-    "Jaygee Olayta",
-    "Cavite",
-    "Gus Fring",
-    "Package D",
-    "In Session"
-  ),
-  createData(
-    "Skyler White",
-    "Taguig",
-    "Walter White",
-    "Package C",
-    "To Be Scheduled"
-  ),
-  createData(
-    "Mike Ehrmantraut",
-    "Cavite",
-    "Jesse Pinkman",
-    "Package C",
-    "In Session"
-  ),
-]
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -166,6 +104,7 @@ function EnhancedTableHead(props) {
             align="left"
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
+            width='300px'
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -204,8 +143,8 @@ function EnhancedTableToolbar(props) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         bgcolor: "orange",
-        color: 'white',
-        borderRadius: '5px 5px 0 0'
+        color: "white",
+        borderRadius: "5px 5px 0 0",
       }}
     >
       {numSelected > 0 ? (
@@ -242,6 +181,24 @@ export default function EnhancedTable() {
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [rows, setRows] = useState([])
+  const [isTableLoading, setIsTableLoading] = useState(true)
+
+  // Fetch Students
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const branch = "Caloocan"
+      const response = await axios.get(
+        `${process.env.REACT_APP_URL}/branches/${branch}/Student`
+      )
+      setRows(response.data)
+
+      if (response)
+      setIsTableLoading(false)
+    }
+
+    fetchStudents()
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc"
@@ -266,11 +223,6 @@ export default function EnhancedTable() {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
-
-  // const handleChangeDense = (event) => {
-  //   setDense(event.target.checked)
-  // }
-
   const isSelected = (name) => selected.indexOf(name) !== -1
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -281,6 +233,7 @@ export default function EnhancedTable() {
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }} elevation={1}>
         <EnhancedTableToolbar numSelected={selected.length} />
+        {isTableLoading && <LinearProgress />}
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -295,6 +248,7 @@ export default function EnhancedTable() {
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
+
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.sort(getComparator(order, orderBy)).slice() */}
@@ -309,20 +263,16 @@ export default function EnhancedTable() {
                       hover
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.id}
+                      key={row._id}
                       selected={isItemSelected}
                     >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                      >
-                        {row.name}
+                      <TableCell component="th" id={labelId} scope="row">
+                        {row.firstName + ' ' + row.lastName}
                       </TableCell>
-                      <TableCell align="left">{row.branch}</TableCell>
+                      <TableCell align="left">{row.branches[0]}</TableCell>
                       <TableCell align="left">{row.instructor}</TableCell>
-                      <TableCell align="left">{row.selectedPackage}</TableCell>
-                      <TableCell align="left">{row.status}</TableCell>
+                      <TableCell align="left">{row.package}</TableCell>
+                      <TableCell align="left">{'In progress'}</TableCell>
                     </TableRow>
                   )
                 })}

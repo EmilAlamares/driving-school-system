@@ -70,6 +70,7 @@ export default function AddStudent() {
       branches,
       type,
       package: selectedPackage,
+      instructorId: instructor._id
     }
 
     const response = await axios.post(
@@ -82,18 +83,15 @@ export default function AddStudent() {
 
   // Fetch Instructors
   useEffect(() => {
-    console.log(branches)
     if (branches) {
       const fetchInstructors = async () => {
         const response = await axios.get(`${process.env.REACT_APP_URL}/branches/${branches}/Instructor`)
-
-        console.log(response)
-
         setInstructorOptions(response.data)
+        setInstructor(null)
       }
 
       fetchInstructors()
-    }
+    } else setInstructor(null)
   }, [branches])
 
   return (
