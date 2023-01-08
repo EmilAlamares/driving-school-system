@@ -7,15 +7,18 @@ import {
   Typography,
 } from "@mui/material"
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
-import React from "react"
+import React, { useEffect } from "react"
 import { useState } from "react"
-
-const branches = ["Taguig", "Caloocan", "Makati", "Cavite"]
+import axios from "axios"
+import { BranchContext } from "../contexts/BranchContext"
+import { useContext } from "react"
 
 const BranchMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [branches, setBranches] = useState([])
   const open = Boolean(anchorEl)
+  const {setBranch} = useContext(BranchContext) 
 
   const handleClickListItem = (e) => {
     setAnchorEl(e.currentTarget)
@@ -23,6 +26,7 @@ const BranchMenu = () => {
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index)
+    setBranch(branches[index])
     setAnchorEl(null)
   }
 
@@ -30,8 +34,18 @@ const BranchMenu = () => {
     setAnchorEl(null)
   }
 
+  const fetchBranches = async () => {
+    const response = await axios.get(`${process.env.REACT_APP_URL}/branches`)
+
+    setBranches(response.data)
+  }
+
+  useEffect(() => {
+    fetchBranches()
+  }, [])
+
   return (
-    <React.Fragment>
+    branches && <React.Fragment>
       <List
         sx={{ position: "absolute", right: 120, p: 0 }}
         component="nav"
@@ -39,8 +53,12 @@ const BranchMenu = () => {
         variant="outlined"
       >
         <ListItem disablePadding>
-          <ListItemButton id="branch-button" onClick={handleClickListItem} sx={{paddingRight: '4px'}}>
-            <Typography variant="h6"> {branches[selectedIndex]}</Typography>
+          <ListItemButton
+            id="branch-button"
+            onClick={handleClickListItem}
+            sx={{ paddingRight: "4px" }}
+          >
+            <Typography variant="h6"> {branches[selectedIndex]?.name}</Typography>
             <ArrowDropDownIcon sx={{ p: 0 }} />
           </ListItemButton>
         </ListItem>
@@ -53,11 +71,11 @@ const BranchMenu = () => {
       >
         {branches.map((branch, index) => (
           <MenuItem
-            key={branch}
+            key={branch._id}
             selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
-            {branch}
+            {branch.name}
           </MenuItem>
         ))}
       </Menu>

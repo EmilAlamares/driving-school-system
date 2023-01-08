@@ -88,8 +88,8 @@ export default function AddStudent() {
         const response = await axios.get(`${process.env.REACT_APP_URL}/branches/${branches}/Instructor`)
         setInstructorOptions(response.data)
         setInstructor(null)
+        console.log(response)
       }
-
       fetchInstructors()
     } else setInstructor(null)
   }, [branches])
@@ -249,9 +249,10 @@ export default function AddStudent() {
               id="instructor-select"
               options={instructorOptions}
               value={instructor}
+              // key={instructor.id}
               onChange={(e, newVal) => setInstructor(newVal)}
               // isOptionEqualToValue={(option, value) => option === value}
-              getOptionLabel={(option) => option.firstName}
+              getOptionLabel={(option) => option.fullName}
               renderInput={(params) => (
                 <TextField {...params} label="Instructor" variant="standard" />
               )}

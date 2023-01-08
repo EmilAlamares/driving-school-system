@@ -4,12 +4,17 @@ import LoginIcon from "@mui/icons-material/Login"
 import React from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import { useContext } from "react"
+import { UserContext } from "../../../contexts/UserContext"
 
 const Form = () => {
   let navigate = useNavigate()
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [loading, setLoading] = React.useState(false)
+  const { setUser } = useContext(UserContext)
+
+
 
   const buttonStyle = {
     mt: "50px",
@@ -35,6 +40,10 @@ const Form = () => {
 
     if (response.data.message === "Success") {
       setLoading(false)
+      setUser({id: response.data.id, firstName: response.data.firstName, lastName: response.data.lastName})
+      localStorage.setItem("user", JSON.stringify(response.data.id))
+      localStorage.setItem("firstName", JSON.stringify(response.data.firstName))
+      localStorage.setItem("lastName", JSON.stringify(response.data.lastName))
       navigate("/")
     }
     else

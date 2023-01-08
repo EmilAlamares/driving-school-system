@@ -29,7 +29,9 @@ import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded"
 import AccountMenu from "./components/AccountMenu"
 import BranchMenu from "./components/BranchMenu"
 import InsertChartIcon from "@mui/icons-material/InsertChart"
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LocationOnIcon from "@mui/icons-material/LocationOn"
+import { useNavigate } from "react-router"
+import { useEffect } from "react"
 
 const drawerWidth = 240
 
@@ -152,8 +154,14 @@ function App(props) {
   const container =
     window !== undefined ? () => window().document.body : undefined
 
+  const isLoggedIn = localStorage.hasOwnProperty("user")
+  let navigate = useNavigate()
+
+  useEffect(() => {
+    if (!isLoggedIn) navigate("/login")
+  })
   return (
-    <Box sx={{ display: "flex" }}>
+    isLoggedIn && <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"

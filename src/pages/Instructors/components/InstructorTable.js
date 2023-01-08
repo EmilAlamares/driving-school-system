@@ -13,37 +13,13 @@ import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
 import AddInstructor from "./AddInstructor"
+import LinearProgress from "@mui/material/LinearProgress"
+import { useState, useEffect } from "react"
+import axios from "axios"
 
 import { visuallyHidden } from "@mui/utils"
-
-function createData(id, name, branch, student, status) {
-  return { id, name, branch, student, status }
-}
-
-let rows = [
-  createData(
-    1,
-    "John Emanuel Alamares",
-    "Caloocan",
-    "Ariel Dela Cruz",
-    "In Session"
-  ),
-  createData(2, "Karen Castro", "Taguig", "Jane Doe", "In Session"),
-  createData(3, "Jaygee Olayta", "Cavite", "Gus Fring", "To Be Scheduled"),
-  createData(4, "John Rey Domondon", "Makati", "John Doe", "In Session"),
-  createData(
-    5,
-    "Mark Francis Calisay",
-    "Makati",
-    "Jesse Pinkman",
-    "To Be Scheduled"
-  ),
-  createData(6, "Eren Yeager", "Caloocan", "Shane Lopez", "To Be Scheduled"),
-  createData(7, "Karen Castro", "Taguig", "Jane Doe", "To Be Scheduled"),
-  createData(8, "Jaygee Olayta", "Cavite", "Gus Fring", "In Session"),
-  createData(9, "Skyler White", "Taguig", "Walter White", "To Be Scheduled"),
-  createData(10, "Mike Ehrmantraut", "Cavite", "Jesse Pinkman", "In Session"),
-]
+import { useContext } from "react"
+import { BranchContext } from "../../../contexts/BranchContext"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -124,6 +100,7 @@ function EnhancedTableHead(props) {
             align="left"
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
+            width='300px'
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -185,7 +162,7 @@ function EnhancedTableToolbar(props) {
           Instructors
         </Typography>
       )}
-              <AddInstructor />
+      <AddInstructor />
     </Toolbar>
   )
 }
@@ -199,7 +176,37 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState("calories")
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
+  const [rows, setRows] = useState([])
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [isTableLoading, setIsTableLoading] = useState(true)
+  const { branch } = useContext(BranchContext)
+
+  // Fetch Instructors
+  useEffect(() => {
+    const fetchInstructors = async () => {
+      const response = await axios.get(
+        `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
+      )
+
+      // Process data
+      response.data.forEach((element, index) => {
+        element.branch = element.branches.join(", ")
+        element.studentNames = element.students.map(
+          (student) =>
+            (student.studentFullName =
+              student.firstName + " " + student.lastName)
+        )
+      })
+
+      setRows(response.data)
+
+      if (response) setIsTableLoading(false)
+
+      console.log(response)
+    }
+
+    fetchInstructors()
+  }, [branch])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc"
@@ -239,6 +246,7 @@ export default function EnhancedTable() {
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }} elevation={1}>
         <EnhancedTableToolbar numSelected={selected.length} />
+        {isTableLoading && <LinearProgress />}
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -271,10 +279,10 @@ export default function EnhancedTable() {
                       selected={isItemSelected}
                     >
                       <TableCell component="th" id={labelId} scope="row">
-                        {row.name}
+                        {row.fullName}
                       </TableCell>
                       <TableCell align="left">{row.branch}</TableCell>
-                      <TableCell align="left">{row.student}</TableCell>
+                      <TableCell align="left">{row.studentNames[0]}</TableCell>
                       <TableCell align="left">{row.status}</TableCell>
                     </TableRow>
                   )

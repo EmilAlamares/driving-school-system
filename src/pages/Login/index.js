@@ -1,15 +1,17 @@
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-} from "@mui/material"
+import { Grid, Card, CardContent, Typography } from "@mui/material"
 import { grey } from "@mui/material/colors"
 import React from "react"
 import Form from "./components/Form"
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 const Login = () => {
+  const isLoggedIn = localStorage.hasOwnProperty("user")
+  let navigate = useNavigate()
 
+  useEffect(() => {
+    if (isLoggedIn) navigate("/")
+  })
   return (
     <>
       <Typography

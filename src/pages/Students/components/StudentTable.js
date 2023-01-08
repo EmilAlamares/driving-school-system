@@ -14,10 +14,11 @@ import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
 import AddStudent from "./AddStudent"
 import LinearProgress from "@mui/material/LinearProgress"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import axios from "axios"
 
 import { visuallyHidden } from "@mui/utils"
+import { BranchContext } from "../../../contexts/BranchContext"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -183,22 +184,24 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [rows, setRows] = useState([])
   const [isTableLoading, setIsTableLoading] = useState(true)
+  const { branch } = useContext(BranchContext)
 
   // Fetch Students
   useEffect(() => {
     const fetchStudents = async () => {
-      const branch = "Caloocan"
       const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch}/Student`
+        `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
       )
       setRows(response.data)
 
       if (response)
       setIsTableLoading(false)
+
+      console.log(response.data)
     }
 
     fetchStudents()
-  }, [])
+  }, [branch])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc"
@@ -270,9 +273,10 @@ export default function EnhancedTable() {
                         {row.firstName + ' ' + row.lastName}
                       </TableCell>
                       <TableCell align="left">{row.branches[0]}</TableCell>
-                      <TableCell align="left">{row.instructor}</TableCell>
+                      {/* <TableCell align="left">{row.instructor.firstName + ' ' + row.instructor.lastName}</TableCell> */}
+                      <TableCell align="left">{row.instructor.fullName}</TableCell>
                       <TableCell align="left">{row.package}</TableCell>
-                      <TableCell align="left">{'In progress'}</TableCell>
+                      <TableCell align="left">{row.status}</TableCell>
                     </TableRow>
                   )
                 })}
