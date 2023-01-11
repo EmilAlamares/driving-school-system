@@ -6,8 +6,11 @@ import {
   Divider,
   Avatar,
 } from "@mui/material"
-import { AccessTimeFilled, AccountCircleRounded } from "@mui/icons-material"
+import { AccountCircleRounded } from "@mui/icons-material"
 import InstructorTable from "./components/InstructorTable"
+import { useEffect, useState, useContext } from "react"
+import { BranchContext } from "../../contexts/BranchContext"
+import axios from "axios"
 
 const cardContentStyles = {
   display: "flex",
@@ -16,20 +19,40 @@ const cardContentStyles = {
 }
 
 const Instructors = () => {
+  const [instructorCount, setInstructorCount] = useState(null)
+  const [isFetching, setIsFetching] = useState(true)
+  const { branch } = useContext(BranchContext)
+
+  useEffect(() => {
+    const fetchInstructors = async () => {
+      setIsFetching(true)
+      const response = await axios.get(
+        `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
+      )
+
+      setInstructorCount(response.data.length)
+      setIsFetching(false)
+    }
+
+    fetchInstructors()
+  }, [branch])
   return (
     <Box>
       <Card variant="outlined" sx={{ display: "inline-block", width: 250 }}>
         <CardContent sx={cardContentStyles}>
           <Typography variant="h6">
             Total Instructors
-            <Typography>89</Typography>
+            <Typography>
+              {isFetching ? "Fetching..." : instructorCount}
+            </Typography>
           </Typography>
           <Avatar sx={{ bgcolor: "#1976d2" }}>
             <AccountCircleRounded />
           </Avatar>
         </CardContent>
       </Card>
-      <Card
+
+      {/* <Card
         variant="outlined"
         sx={{ display: "inline-block", marginLeft: "20px", width: 250 }}
       >
@@ -42,7 +65,8 @@ const Instructors = () => {
             <AccessTimeFilled />
           </Avatar>
         </CardContent>
-      </Card>
+      </Card> */}
+
       <Divider sx={{ marginTop: "10px" }} />
 
       <Box paddingTop={"10px"}>

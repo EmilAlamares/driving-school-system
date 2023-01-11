@@ -11,7 +11,9 @@ import Chart from "./components/Chart"
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded"
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded"
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import { useContext, useState, useEffect } from "react"
+import { BranchContext } from "../../contexts/BranchContext"
+import axios from "axios"
 
 const cardStyles = {
   width: "250px",
@@ -25,52 +27,101 @@ const cardContentStyles = {
   justifyContent: "space-around",
 }
 
-const totalStudents = (
-  <>
-    <CardContent sx={cardContentStyles}>
-      <Typography variant="h6">
-        Students
-        <Typography>127</Typography>
-      </Typography>
-      <Avatar sx={{ bgcolor: "orange" }}>
-        <SchoolRoundedIcon />
-      </Avatar>
-    </CardContent>
-  </>
-)
-
-const totalInstructors = (
-  <>
-    <CardContent sx={cardContentStyles}>
-      <Typography variant="h6">
-        Instructors
-        <Typography>89</Typography>
-      </Typography>
-      <Avatar sx={{ bgcolor: "#1976d2" }}>
-        <AccountCircleRoundedIcon />
-      </Avatar>
-    </CardContent>
-  </>
-)
-
-const todaySession = (
-  <>
-    <CardContent sx={cardContentStyles}>
-      <Typography variant="h6">
-        Today's Session
-        <Typography>25</Typography>
-      </Typography>
-      <Avatar sx={{ bgcolor: "#8C7B69" }}>
-        <CalendarMonthRoundedIcon />
-      </Avatar>
-    </CardContent>
-  </>
-)
+// const todaySession = (
+//   <>
+//     <CardContent sx={cardContentStyles}>
+//       <Typography variant="h6">
+//         Today's Session
+//         <Typography>25</Typography>
+//       </Typography>
+//       <Avatar sx={{ bgcolor: "#8C7B69" }}>
+//         <CalendarMonthRoundedIcon />
+//       </Avatar>
+//     </CardContent>
+//   </>
+// )
 
 const Dashboard = () => {
+  const [instructorCount, setInstructorCount] = useState(null)
+  const [studentCount, setStudentCount] = useState(null)
+  const [isFetchingStudent, setIsFetchingStudent] = useState(true)
+  const [isFetchingInstructor, setIsFetchingInstructor] = useState(true)
+  const { branch } = useContext(BranchContext)
+
+  const totalStudents = (
+    <>
+      <CardContent sx={cardContentStyles}>
+        <Typography variant="h6">
+          Students
+          <Typography>
+            {" "}
+            {isFetchingStudent ? "Fetching..." : studentCount}
+          </Typography>
+        </Typography>
+        <Avatar sx={{ bgcolor: "orange" }}>
+          <SchoolRoundedIcon />
+        </Avatar>
+      </CardContent>
+    </>
+  )
+
+  const totalInstructors = (
+    <>
+      <CardContent sx={cardContentStyles}>
+        <Typography variant="h6">
+          Instructors
+          <Typography>
+            {" "}
+            {isFetchingInstructor ? "Fetching..." : instructorCount}
+          </Typography>
+        </Typography>
+        <Avatar sx={{ bgcolor: "#1976d2" }}>
+          <AccountCircleRoundedIcon />
+        </Avatar>
+      </CardContent>
+    </>
+  )
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      setIsFetchingStudent(true)
+      const response = await axios.get(
+        `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
+      )
+      setIsFetchingStudent(false)
+      setStudentCount(response.data.length)
+    }
+
+    const fetchInstructors = async () => {
+      setIsFetchingInstructor(true)
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
+      )
+      setIsFetchingInstructor(false)
+
+      setInstructorCount(response.data.length)
+    }
+
+    fetchStudents()
+    fetchInstructors()
+  }, [branch])
   // eslint-disable-next-line
   const [chartData, setChartData] = useState({
-    labels: ["January", "February", "March", "April", "May", 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    labels: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
     datasets: [
       {
         label: "Students",
@@ -97,14 +148,15 @@ const Dashboard = () => {
         >
           {totalInstructors}
         </Card>
-        <Card
+
+        {/* <Card
           variant="outlined"
           sx={{ ...cardStyles, marginLeft: "20px" }}
           component={Link}
           to="/schedules"
         >
           {todaySession}
-        </Card>
+        </Card> */}
       </Box>
 
       <Divider sx={{ marginTop: "24px" }} />

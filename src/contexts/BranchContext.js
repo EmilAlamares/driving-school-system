@@ -1,9 +1,9 @@
-import { createContext, useState } from "react"
+import { createContext, useContext, useState } from "react"
 
 export const BranchContext = createContext({})
 
 const BranchContextProvider = (props) => {
-  const [branch, setBranch] = useState("Caloocan")
+  const [branch, setBranch] = useState({ name: "Makati" })
 
   return (
     <BranchContext.Provider value={{ branch, setBranch }}>

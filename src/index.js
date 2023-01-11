@@ -10,19 +10,22 @@ import "@fontsource/roboto/400.css"
 import "@fontsource/roboto/500.css"
 import "@fontsource/roboto/700.css"
 import BranchContextProvider from "./contexts/BranchContext"
+import BranchesContextProvider from "./contexts/BranchesContext"
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
   <>
     <UserContextProvider>
-      <BranchContextProvider>
-        <Router>
-          <Routes>
-            <Route path="*" element={<App />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </Router>
-      </BranchContextProvider>
+      <BranchesContextProvider>
+        <BranchContextProvider>
+          <Router>
+            <Routes>
+              <Route path="*" element={<App />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </Router>
+        </BranchContextProvider>
+      </BranchesContextProvider>
     </UserContextProvider>
   </>
 )

@@ -72,8 +72,6 @@ export default function AddInstructor() {
       data
     )
 
-    console.log(response)
-    console.log(branches)
   }
 
   return (
