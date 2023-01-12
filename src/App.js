@@ -40,7 +40,7 @@ function App(props) {
   const { pathname } = useLocation()
   const { window } = props
   const [mobileOpen, setMobileOpen] = React.useState(false)
-  const {user} = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -65,37 +65,41 @@ function App(props) {
           </ListItemButton>
         </ListItem>
 
-{        <ListItem key="Students" disablePadding>
-          <ListItemButton
-            selected={pathname === "/students"}
-            component={Link}
-            to="/students"
-            onClick={handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <SchoolRoundedIcon
-                color={pathname === "/students" ? "primary" : ""}
-              />
-            </ListItemIcon>
-            <ListItemText primary="Students" />
-          </ListItemButton>
-        </ListItem>}
+        {user.type != "Student" && (
+          <ListItem key="Students" disablePadding>
+            <ListItemButton
+              selected={pathname === "/students"}
+              component={Link}
+              to="/students"
+              onClick={handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <SchoolRoundedIcon
+                  color={pathname === "/students" ? "primary" : ""}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Students" />
+            </ListItemButton>
+          </ListItem>
+        )}
 
-        <ListItem key="Instructors" disablePadding>
-          <ListItemButton
-            component={Link}
-            to="/instructors"
-            onClick={handleDrawerToggle}
-            selected={pathname === "/instructors"}
-          >
-            <ListItemIcon>
-              <AccountCircleRoundedIcon
-                color={pathname === "/instructors" ? "primary" : ""}
-              />
-            </ListItemIcon>
-            <ListItemText primary="Instructors" />
-          </ListItemButton>
-        </ListItem>
+        {user.type != "Instructor" && (
+          <ListItem key="Instructors" disablePadding>
+            <ListItemButton
+              component={Link}
+              to="/instructors"
+              onClick={handleDrawerToggle}
+              selected={pathname === "/instructors"}
+            >
+              <ListItemIcon>
+                <AccountCircleRoundedIcon
+                  color={pathname === "/instructors" ? "primary" : ""}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Instructors" />
+            </ListItemButton>
+          </ListItem>
+        )}
 
         <ListItem key="Schedules" disablePadding>
           <ListItemButton
@@ -116,39 +120,43 @@ function App(props) {
 
         <Divider />
 
-        <ListItem key="Branches" disablePadding>
-          <ListItemButton
-            component={Link}
-            to="/branches"
-            onClick={handleDrawerToggle}
-            selected={pathname === "/branches"}
-          >
-            <ListItemIcon>
-              <LocationOnIcon
-                color={pathname === "/branches" ? "primary" : ""}
-              />
-            </ListItemIcon>
+        {user.type == "Admin" && (
+          <ListItem key="Branches" disablePadding>
+            <ListItemButton
+              component={Link}
+              to="/branches"
+              onClick={handleDrawerToggle}
+              selected={pathname === "/branches"}
+            >
+              <ListItemIcon>
+                <LocationOnIcon
+                  color={pathname === "/branches" ? "primary" : ""}
+                />
+              </ListItemIcon>
 
-            <ListItemText primary="Branches" />
-          </ListItemButton>
-        </ListItem>
+              <ListItemText primary="Branches" />
+            </ListItemButton>
+          </ListItem>
+        )}
 
-        <ListItem key="Reports" disablePadding>
-          <ListItemButton
-            component={Link}
-            to="/reports"
-            onClick={handleDrawerToggle}
-            selected={pathname === "/reports"}
-          >
-            <ListItemIcon>
-              <InsertChartIcon
-                color={pathname === "/reports" ? "primary" : ""}
-              />
-            </ListItemIcon>
+        {user.type == "Admin" && (
+          <ListItem key="Reports" disablePadding>
+            <ListItemButton
+              component={Link}
+              to="/reports"
+              onClick={handleDrawerToggle}
+              selected={pathname === "/reports"}
+            >
+              <ListItemIcon>
+                <InsertChartIcon
+                  color={pathname === "/reports" ? "primary" : ""}
+                />
+              </ListItemIcon>
 
-            <ListItemText primary="Reports" />
-          </ListItemButton>
-        </ListItem>
+              <ListItemText primary="Reports" />
+            </ListItemButton>
+          </ListItem>
+        )}
       </List>
     </div>
   )
@@ -164,96 +172,98 @@ function App(props) {
     if (!isLoggedIn) navigate("/login")
   })
   return (
-    isLoggedIn && <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ pointerEvents: "none" }}
-          >
-            Driving School Management System
-          </Typography>
-
-          <BranchMenu />
-          <AccountMenu />
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
+    isLoggedIn && (
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
           sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
           }}
         >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-        <Toolbar />
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ pointerEvents: "none" }}
+            >
+              Driving School Management System
+            </Typography>
 
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="students" element={<Students />} />
-          <Route path="/instructors" element={<Instructors />} />
-          <Route path="/schedules" element={<Schedules />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/branches" element={<Branches />} />
-        </Routes>
+            {user.type === 'Admin' && <BranchMenu />}
+            <AccountMenu />
+          </Toolbar>
+        </AppBar>
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="mailbox folders"
+        >
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Drawer
+            container={container}
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+          >
+            {drawer}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+          }}
+        >
+          <Toolbar />
+
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="students" element={<Students />} />
+            <Route path="/instructors" element={<Instructors />} />
+            <Route path="/schedules" element={<Schedules />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/branches" element={<Branches />} />
+          </Routes>
+        </Box>
       </Box>
-    </Box>
+    )
   )
 }
 

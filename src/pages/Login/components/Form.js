@@ -14,8 +14,6 @@ const Form = () => {
   const [loading, setLoading] = React.useState(false)
   const { setUser } = useContext(UserContext)
 
-
-
   const buttonStyle = {
     mt: "50px",
     borderRadius: "30px",
@@ -40,16 +38,20 @@ const Form = () => {
 
     if (response.data.message === "Success") {
       setLoading(false)
-      setUser({id: response.data.id, firstName: response.data.firstName, lastName: response.data.lastName})
+      setUser({
+        id: response.data.id,
+        firstName: response.data.firstName,
+        lastName: response.data.lastName,
+        type: response.data.type,
+        branches: response.data.branches,
+      })
       localStorage.setItem("user", JSON.stringify(response.data.id))
       localStorage.setItem("firstName", JSON.stringify(response.data.firstName))
       localStorage.setItem("lastName", JSON.stringify(response.data.lastName))
       localStorage.setItem("type", JSON.stringify(response.data.type))
+      localStorage.setItem("branches", JSON.stringify(response.data.branches))
       navigate("/")
-    }
-    else
-    setLoading(false)
-
+    } else setLoading(false)
   }
   return (
     <form autoComplete="off" onSubmit={(e) => handleSubmit(e)}>

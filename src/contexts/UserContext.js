@@ -12,6 +12,7 @@ const UserContextProvider = (props) => {
     firstName: JSON.parse(localStorage.getItem("firstName")),
     lastName: JSON.parse(localStorage.getItem("lastName")),
     type: JSON.parse(localStorage.getItem("type")),
+    branches: JSON.parse(localStorage.getItem("branches")),
   }
 
   const [user, setUser] = useState(items || {})

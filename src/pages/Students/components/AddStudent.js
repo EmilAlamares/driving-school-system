@@ -17,6 +17,7 @@ import axios from "axios"
 import { useEffect } from "react"
 import { useContext } from "react"
 import { BranchesContext } from "../../../contexts/BranchesContext"
+import { UserContext } from "../../../contexts/UserContext"
 
 const style = {
   position: "absolute",
@@ -52,6 +53,7 @@ export default function AddStudent() {
   const [selectedPackage, setSelectedPackage] = useState(null)
   const [instructor, setInstructor] = useState(null)
   const [instructorOptions, setInstructorOptions] = useState(null)
+  const { user } = useContext(UserContext)
   const { branches } = useContext(BranchesContext)
   const [sessions, setSessions] = useState([
     { date: dayjs("2023-01-01"), startTime: null, endTime: null },
@@ -129,10 +131,7 @@ export default function AddStudent() {
       branch: selectedBranch,
     }
 
-    await axios.post(
-      `${process.env.REACT_APP_URL}/sessions`,
-      data2
-    )
+    await axios.post(`${process.env.REACT_APP_URL}/sessions`, data2)
 
     console.log({ response })
   }
@@ -154,226 +153,231 @@ export default function AddStudent() {
   }, [selectedBranch])
 
   return (
-    <div>
-      <Button sx={{ width: 200 }} variant="contained" onClick={handleOpen}>
-        Add Student
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            overflow={"hidden"}
-          >
-            <Typography
-              id="modal-modal-title"
-              variant="h4"
-              component="h2"
-              color={"#1976d2"}
-              fontWeight={"bold"}
+    user.type == "Admin" && (
+      <div>
+        <Button sx={{ width: 200 }} variant="contained" onClick={handleOpen}>
+          Add Student
+        </Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              overflow={"hidden"}
             >
-              New Student
-            </Typography>
+              <Typography
+                id="modal-modal-title"
+                variant="h4"
+                component="h2"
+                color={"#1976d2"}
+                fontWeight={"bold"}
+              >
+                New Student
+              </Typography>
 
-            <IconButton onClick={handleClose}>
-              <Close />
-            </IconButton>
-          </Box>
-          <Divider sx={{ marginTop: "24px" }} />
+              <IconButton onClick={handleClose}>
+                <Close />
+              </IconButton>
+            </Box>
+            <Divider sx={{ marginTop: "24px" }} />
 
-          <Box display={"flex"} justifyContent={"space-around"}>
-            <TextField
-              variant="standard"
-              label="E-mail"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-            />
-            <TextField
-              variant="standard"
-              label="Password"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              type="password"
-            />
-            <TextField
-              variant="standard"
-              label="Confirm Password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              value={confirmPassword}
-              type="password"
-            />
-          </Box>
-          <Divider sx={{ marginTop: "24px" }} />
+            <Box display={"flex"} justifyContent={"space-around"}>
+              <TextField
+                variant="standard"
+                label="E-mail"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+              />
+              <TextField
+                variant="standard"
+                label="Password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type="password"
+              />
+              <TextField
+                variant="standard"
+                label="Confirm Password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={confirmPassword}
+                type="password"
+              />
+            </Box>
+            <Divider sx={{ marginTop: "24px" }} />
 
-          <Box>
-            <TextField
-              variant="standard"
-              label="First Name"
-              onChange={(e) => setFirstName(e.target.value)}
-              value={firstName}
-            />
-            <TextField
-              variant="standard"
-              label="Middle Name"
-              sx={{ marginLeft: "12px" }}
-              onChange={(e) => setMiddleName(e.target.value)}
-              value={middleName}
-            />
-            <TextField
-              variant="standard"
-              label="Last Name"
-              sx={{ marginLeft: "12px" }}
-              onChange={(e) => setLastName(e.target.value)}
-              value={lastName}
-            />
-          </Box>
+            <Box>
+              <TextField
+                variant="standard"
+                label="First Name"
+                onChange={(e) => setFirstName(e.target.value)}
+                value={firstName}
+              />
+              <TextField
+                variant="standard"
+                label="Middle Name"
+                sx={{ marginLeft: "12px" }}
+                onChange={(e) => setMiddleName(e.target.value)}
+                value={middleName}
+              />
+              <TextField
+                variant="standard"
+                label="Last Name"
+                sx={{ marginLeft: "12px" }}
+                onChange={(e) => setLastName(e.target.value)}
+                value={lastName}
+              />
+            </Box>
 
-          <Box
-            mt={"12px"}
-            display={"flex"}
-            justifyContent={"space-between"}
-            gap={"12px"}
-          >
-            <Autocomplete
-              sx={{ width: "40%" }}
-              options={["Male", "Female"]}
-              onChange={(e, newVal) => setGender(newVal)}
-              isOptionEqualToValue={(option, value) => option === value}
-              value={gender}
-              renderInput={(params) => (
-                <TextField {...params} label="Gender" variant="standard" />
-              )}
-            />
+            <Box
+              mt={"12px"}
+              display={"flex"}
+              justifyContent={"space-between"}
+              gap={"12px"}
+            >
+              <Autocomplete
+                sx={{ width: "40%" }}
+                options={["Male", "Female"]}
+                onChange={(e, newVal) => setGender(newVal)}
+                isOptionEqualToValue={(option, value) => option === value}
+                value={gender}
+                renderInput={(params) => (
+                  <TextField {...params} label="Gender" variant="standard" />
+                )}
+              />
 
-            <TextField
-              variant="standard"
-              label="Contact No."
-              onChange={(e) => setContactNo(e.target.value)}
-              value={contactNo}
-            />
+              <TextField
+                variant="standard"
+                label="Contact No."
+                onChange={(e) => setContactNo(e.target.value)}
+                value={contactNo}
+              />
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
-                label="Birthdate"
-                inputFormat="MM-DD-YYYY"
-                onChange={handleChangeDate}
-                value={birthDate}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  label="Birthdate"
+                  inputFormat="MM-DD-YYYY"
+                  onChange={handleChangeDate}
+                  value={birthDate}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      sx={{ width: "50%" }}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+
+            <Box mt={"12px"}>
+              <TextField
+                variant="standard"
+                label="Address"
+                fullWidth
+                onChange={(e) => setAddress(e.target.value)}
+                value={address}
+              />
+            </Box>
+
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box sx={{ mt: "12px", mb: "12px" }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                {sessions.map((item, index) => (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      mt: "12px",
+                    }}
+                  >
+                    <DesktopDatePicker
+                      label={`Session ${index + 1} Date`}
+                      inputFormat="MM-DD-YYYY"
+                      value={sessions[index].date}
+                      onChange={(newValue) =>
+                        handleChangeSessionDate(newValue, index)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                      )}
+                    />
+                    <DesktopTimePicker
+                      value={sessions[index].startTime}
+                      onChange={(newValue) =>
+                        handleChangeSessionStartTime(newValue, index)
+                      }
+                      label="Start Time"
+                      renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                      )}
+                    />
+                    <DesktopTimePicker
+                      value={sessions[index].endTime}
+                      onChange={(newValue) =>
+                        handleChangeSessionEndTime(newValue, index)
+                      }
+                      label="End Time"
+                      renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                      )}
+                    />
+                  </Box>
+                ))}
+              </LocalizationProvider>
+              <Button
+                sx={{ position: "absolute", right: "12px" }}
+                variant="text"
+                onClick={() => handleAddSession()}
+                size="small"
+              >
+                Add Session
+              </Button>
+            </Box>
+
+            <Divider sx={{ marginTop: "36px" }} />
+            <Box mt={"12px"} display={"flex"} gap={"12px"}>
+              <Autocomplete
+                fullWidth
+                // multiple
+                id="branches-select"
+                options={branches}
+                value={selectedBranch}
+                onChange={(e, newVal) => setSelectedBranch(newVal)}
+                isOptionEqualToValue={(option, value) => option === value}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField {...params} label="Branch" variant="standard" />
+                )}
+              />
+
+              <Autocomplete
+                fullWidth
+                disabled={!instructorOptions || !selectedBranch}
+                id="instructor-select"
+                options={instructorOptions}
+                value={instructor}
+                // key={instructor.id}
+                onChange={(e, newVal) => setInstructor(newVal)}
+                // isOptionEqualToValue={(option, value) => option === value}
+                getOptionLabel={(option) => option.fullName}
                 renderInput={(params) => (
                   <TextField
                     {...params}
+                    label="Instructor"
                     variant="standard"
-                    sx={{ width: "50%" }}
                   />
                 )}
               />
-            </LocalizationProvider>
-          </Box>
 
-          <Box mt={"12px"}>
-            <TextField
-              variant="standard"
-              label="Address"
-              fullWidth
-              onChange={(e) => setAddress(e.target.value)}
-              value={address}
-            />
-          </Box>
-
-          <Divider sx={{ marginTop: "24px" }} />
-
-          <Box sx={{ mt: "12px", mb: "12px" }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {sessions.map((item, index) => (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    mt: "12px",
-                  }}
-                >
-                  <DesktopDatePicker
-                    label={`Session ${index + 1} Date`}
-                    inputFormat="MM-DD-YYYY"
-                    value={sessions[index].date}
-                    onChange={(newValue) =>
-                      handleChangeSessionDate(newValue, index)
-                    }
-                    renderInput={(params) => (
-                      <TextField {...params} variant="standard" />
-                    )}
-                  />
-                  <DesktopTimePicker
-                    value={sessions[index].startTime}
-                    onChange={(newValue) =>
-                      handleChangeSessionStartTime(newValue, index)
-                    }
-                    label="Start Time"
-                    renderInput={(params) => (
-                      <TextField {...params} variant="standard" />
-                    )}
-                  />
-                  <DesktopTimePicker
-                    value={sessions[index].endTime}
-                    onChange={(newValue) =>
-                      handleChangeSessionEndTime(newValue, index)
-                    }
-                    label="End Time"
-                    renderInput={(params) => (
-                      <TextField {...params} variant="standard" />
-                    )}
-                  />
-                </Box>
-              ))}
-            </LocalizationProvider>
-            <Button
-              sx={{ position: "absolute", right: "12px" }}
-              variant="text"
-              onClick={() => handleAddSession()}
-              size="small"
-            >
-              Add Session
-            </Button>
-          </Box>
-
-          <Divider sx={{ marginTop: "36px" }} />
-          <Box mt={"12px"} display={"flex"} gap={"12px"}>
-            <Autocomplete
-              fullWidth
-              // multiple
-              id="branches-select"
-              options={branches}
-              value={selectedBranch}
-              onChange={(e, newVal) => setSelectedBranch(newVal)}
-              isOptionEqualToValue={(option, value) => option === value}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField {...params} label="Branch" variant="standard" />
-              )}
-            />
-
-            <Autocomplete
-              fullWidth
-              disabled={!instructorOptions || !selectedBranch}
-              id="instructor-select"
-              options={instructorOptions}
-              value={instructor}
-              // key={instructor.id}
-              onChange={(e, newVal) => setInstructor(newVal)}
-              // isOptionEqualToValue={(option, value) => option === value}
-              getOptionLabel={(option) => option.fullName}
-              renderInput={(params) => (
-                <TextField {...params} label="Instructor" variant="standard" />
-              )}
-            />
-
-            {/* <Autocomplete
+              {/* <Autocomplete
               fullWidth
               // multiple
               id="packages-select"
@@ -386,24 +390,32 @@ export default function AddStudent() {
                 <TextField {...params} label="Package" variant="standard" />
               )}
             /> */}
-          </Box>
+            </Box>
 
-          <Box textAlign={"right"} mt={"24px"}>
-            <Button variant="text" sx={{ color: "red" }} onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="text" sx={{ color: "orange" }}>
-              Reset
-            </Button>
-            <Button variant="text" onClick={() => {
-              handleSubmit()
-              handleClose()
-              }}>
-              Save
-            </Button>
+            <Box textAlign={"right"} mt={"24px"}>
+              <Button
+                variant="text"
+                sx={{ color: "red" }}
+                onClick={handleClose}
+              >
+                Close
+              </Button>
+              <Button variant="text" sx={{ color: "orange" }}>
+                Reset
+              </Button>
+              <Button
+                variant="text"
+                onClick={() => {
+                  handleSubmit()
+                  handleClose()
+                }}
+              >
+                Save
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Modal>
-    </div>
+        </Modal>
+      </div>
+    )
   )
 }

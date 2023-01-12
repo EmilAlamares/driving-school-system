@@ -4,22 +4,34 @@ import { useContext, useState } from "react"
 import { BranchContext } from "../../contexts/BranchContext"
 import SessionCard from "./components/SessionCard"
 import { Typography } from "@mui/material"
+import { UserContext } from "../../contexts/UserContext"
 
 const Schedules = () => {
   const [sessions, setSessions] = useState([])
   const [isSessionLoading, setIsSessionLoading] = useState(true)
   const { branch } = useContext(BranchContext)
+  const { user } = useContext(UserContext)
+  const _ = require('lodash')
 
   useEffect(() => {
     setSessions([])
     setIsSessionLoading(true)
     const fetchSessions = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/sessions/${branch.name}`
-      )
+      let response
 
-      if (response.data.length < 1) 
-      return setIsSessionLoading(false)
+      if (user.type == "Admin")
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/sessions/${branch.name}`
+        )
+
+      if (user.type == "Instructor") {
+        response = await axios.get(`${process.env.REACT_APP_URL}/sessions`)
+        response.data = _.filter(response.data, item => {
+          return item.instructorId === user.id
+        })
+      }
+
+      if (response.data.length < 1) return setIsSessionLoading(false)
 
       response.data.map(async (item) => {
         item.date = new Date(item.date).toLocaleDateString()
@@ -49,18 +61,18 @@ const Schedules = () => {
         setSessions((sessions) => [...sessions, item])
         setIsSessionLoading(false)
       })
-
     }
 
     fetchSessions()
   }, [branch])
   return (
     <>
-      {isSessionLoading && <Typography variant={'h6'}>Fetching...</Typography>}
+      {isSessionLoading && <Typography variant={"h6"}>Fetching...</Typography>}
       {sessions.length > 0 &&
         sessions.map((item) => <SessionCard session={item} />)}
-      {!isSessionLoading && sessions.length < 1 && <Typography variant={'h6'}>No sessions found.</Typography>}
-
+      {!isSessionLoading && sessions.length < 1 && (
+        <Typography variant={"h6"}>No sessions found.</Typography>
+      )}
     </>
   )
 }

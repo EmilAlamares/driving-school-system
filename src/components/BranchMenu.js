@@ -51,7 +51,7 @@ const BranchMenu = () => {
               sx={{ paddingRight: "4px" }}
             >
               <Typography variant="h6">
-                {" "}
+                {/* {" "} */}
                 {branches[selectedIndex]?.name}
               </Typography>
               <ArrowDropDownIcon sx={{ p: 0 }} />

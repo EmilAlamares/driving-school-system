@@ -13,6 +13,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn"
 import { Link } from "react-router-dom"
 import { useContext, useState, useEffect } from "react"
 import { BranchContext } from "../../contexts/BranchContext"
+import { UserContext } from "../../contexts/UserContext"
 import axios from "axios"
 
 const cardStyles = {
@@ -34,7 +35,9 @@ const Dashboard = () => {
   const [isFetchingStudent, setIsFetchingStudent] = useState(true)
   const [isFetchingInstructor, setIsFetchingInstructor] = useState(true)
   const [isFetchingBranches, setIsFetchingBranches] = useState(true)
+  const _ = require("lodash")
   const { branch } = useContext(BranchContext)
+  const { user } = useContext(UserContext)
 
   const totalStudents = (
     <>
@@ -80,7 +83,7 @@ const Dashboard = () => {
           </Typography>
         </Typography>
         <Avatar sx={{ bgcolor: "#ffead5" }}>
-          <LocationOnIcon sx={{color: 'red'}}/>
+          <LocationOnIcon sx={{ color: "red" }} />
         </Avatar>
       </CardContent>
     </>
@@ -89,22 +92,41 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       setIsFetchingStudent(true)
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
-      )
-      setIsFetchingStudent(false)
-      setStudentCount(response.data.length)
+      let response
+
+      if (user.type == "Admin") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
+        )
+        setIsFetchingStudent(false)
+        setStudentCount(response.data.length)
+      }
+
+      if (user.type == "Instructor") {
+        console.log(user)
+        response = await axios.get(`${process.env.REACT_APP_URL}/users`)
+
+        let filteredResponse = _.filter(response.data, (item) => {
+          return item.instructorId == user.id
+        })
+        console.log({ filteredResponse })
+        setIsFetchingStudent(false)
+        setStudentCount(filteredResponse.length)
+      }
     }
 
     const fetchInstructors = async () => {
       setIsFetchingInstructor(true)
+      let response
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
-      )
+      if (user.type == "Admin") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
+        )
+        setInstructorCount(response.data.length)
+      }
+
       setIsFetchingInstructor(false)
-
-      setInstructorCount(response.data.length)
     }
 
     const fetchBranches = async () => {
@@ -154,30 +176,37 @@ const Dashboard = () => {
         >
           {totalStudents}
         </Card>
-        <Card
-          variant="outlined"
-          sx={{ ...cardStyles, marginLeft: "20px" }}
-          component={Link}
-          to="/instructors"
-        >
-          {totalInstructors}
-        </Card>
 
-        <Card
-          variant="outlined"
-          sx={{ ...cardStyles, marginLeft: "20px" }}
-          component={Link}
-          to="/branches"
-        >
-          {totalBranches}
-        </Card>
+        {user.type == "Admin" && (
+          <Card
+            variant="outlined"
+            sx={{ ...cardStyles, marginLeft: "20px" }}
+            component={Link}
+            to="/instructors"
+          >
+            {totalInstructors}
+          </Card>
+        )}
+
+        {user.type == "Admin" && (
+          <Card
+            variant="outlined"
+            sx={{ ...cardStyles, marginLeft: "20px" }}
+            component={Link}
+            to="/branches"
+          >
+            {totalBranches}
+          </Card>
+        )}
       </Box>
 
       <Divider sx={{ marginTop: "24px" }} />
 
-      <Box height={600}>
-        <Chart chartData={chartData} />
-      </Box>
+      {user.type == "Admin" && (
+        <Box height={600}>
+          <Chart chartData={chartData} />
+        </Box>
+      )}
     </>
   )
 }

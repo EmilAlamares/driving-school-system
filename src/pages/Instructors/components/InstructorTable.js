@@ -20,6 +20,7 @@ import axios from "axios"
 import { visuallyHidden } from "@mui/utils"
 import { useContext } from "react"
 import { BranchContext } from "../../../contexts/BranchContext"
+import { UserContext } from "../../../contexts/UserContext"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -94,7 +95,7 @@ function EnhancedTableHead(props) {
             align="left"
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            width='300px'
+            width="300px"
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -174,6 +175,7 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [isTableLoading, setIsTableLoading] = useState(true)
   const { branch } = useContext(BranchContext)
+  const { user } = useContext(UserContext)
 
   // Fetch Instructors
   useEffect(() => {

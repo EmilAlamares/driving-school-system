@@ -11,6 +11,7 @@ import StudentTable from "./components/StudentTable"
 import { useEffect, useState, useContext } from "react"
 import { BranchContext } from "../../contexts/BranchContext"
 import axios from "axios"
+import { UserContext } from "../../contexts/UserContext"
 
 const cardContentStyles = {
   display: "flex",
@@ -22,15 +23,33 @@ const Students = () => {
   const [studentCount, setStudentCount] = useState(null)
   const [isFetching, setIsFetching] = useState(true)
   const { branch } = useContext(BranchContext)
+  const { user } = useContext(UserContext)
+  const _ = require('lodash')
 
   useEffect(() => {
     const fetchStudents = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
-      )
+      setIsFetching(true)
+      let response
 
-      setStudentCount(response.data.length)
-      setIsFetching(false)
+      if (user.type === "Admin") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
+        )
+        setIsFetching(false)
+        setStudentCount(response.data.length)
+      }
+
+      if (user.type === "Instructor") {
+        console.log(user)
+        response = await axios.get(`${process.env.REACT_APP_URL}/users`)
+
+        let filteredResponse = _.filter(response.data, (item) => {
+          return item.instructorId === user.id
+        })
+        console.log({ filteredResponse })
+        setIsFetching(false)
+        setStudentCount(filteredResponse.length)
+      }
     }
 
     fetchStudents()
@@ -42,9 +61,7 @@ const Students = () => {
         <CardContent sx={cardContentStyles}>
           <Typography variant="h6">
             Total Students
-            <Typography>
-              {isFetching ? 'Fetching...' : studentCount}
-              </Typography>
+            <Typography>{isFetching ? "Fetching..." : studentCount}</Typography>
           </Typography>
           <Avatar sx={{ bgcolor: "orange" }}>
             <SchoolRounded />

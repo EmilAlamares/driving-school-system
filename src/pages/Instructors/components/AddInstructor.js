@@ -15,6 +15,7 @@ import { useState } from "react"
 import dayjs from "dayjs"
 import axios from "axios"
 import { useContext } from "react"
+import { UserContext } from "../../../contexts/UserContext"
 
 const style = {
   position: "absolute",
@@ -48,6 +49,7 @@ export default function AddInstructor() {
   const [contactNo, setContactNo] = useState("")
   const [selectedBranch, setSelectedBranch] = useState([])
   const { branches } = useContext(BranchesContext)
+  const {user} = useContext(UserContext)
   const type = "Instructor"
 
   const handleChangeDate = (newDate) => {
@@ -77,7 +79,7 @@ export default function AddInstructor() {
   }
 
   return (
-    <div>
+    user.type == 'Admin' && <div>
       <Button
         sx={{ width: 200, backgroundColor: "orange" }}
         variant="contained"

@@ -6,38 +6,80 @@ import {
   CardActions,
   Button,
   Modal,
+  TextField,
+  RadioGroup,
+  Radio,
 } from "@mui/material"
 import { Close } from "@mui/icons-material"
-import { Divider, IconButton } from "@mui/material"
-import { useState } from "react"
-import { useEffect } from "react"
+import {
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  FormControlLabel,
+} from "@mui/material"
+import { useContext, useState, useEffect } from "react"
 import axios from "axios"
+import { UserContext } from "../../../contexts/UserContext"
 
 const SessionCard = ({ session }) => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+  const { user } = useContext(UserContext)
+  const [isEvaluated, setIsEvaluated] = useState(false)
+  const [evaluationItems, setEvaluationItems] = useState([
+    {
+      title: "Evaluation Item",
+      verdict: "Passed",
+    },
+  ])
 
-  // const [instructorCount, setInstructorCount] = useState(null)
-  // const [studentCount, setStudentCount] = useState(null)
+  const fetchSession = async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_URL}/sessions/evaluations/${session._id}`
+    )
 
-  // useEffect(() => {
-  //   const fetchStudents = async () => {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_URL}/branches/${name}/Student`)
-  //       setStudentCount(response.data.length)
-  //     }
+    if (response.data.evaluations.length) {
+      setEvaluationItems(response.data.evaluations)
+      setIsEvaluated(true)
+    }
 
-  //   const fetchInstructors = async () => {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_URL}/branches/${name}/Instructor`)
-  //       setInstructorCount(response.data.length)
-  //   }
+    console.log(response)
+  }
 
-  //   fetchStudents()
-  //   fetchInstructors()
+  const handleChangeEvaluationTitle = (newValue, index) => {
+    setEvaluationItems(
+      evaluationItems.map((evaluation, evaluationIndex) => {
+        if (evaluationIndex === index) evaluation.title = newValue
 
-  // }, [])
+        return evaluation
+      })
+    )
+  }
+
+  const handleSave = async () => {
+    const data = {
+      evaluations: evaluationItems,
+    }
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_URL}/sessions/evaluations/${session._id}`,
+      data
+    )
+
+    console.log(response)
+  }
+
+  const handleChangeEvaluationVerdict = (newValue, index) => {
+    setEvaluationItems(
+      evaluationItems.map((evaluation, evaluationIndex) => {
+        if (evaluationIndex === index) evaluation.verdict = newValue
+
+        return evaluation
+      })
+    )
+  }
 
   const style = {
     position: "absolute",
@@ -56,7 +98,16 @@ const SessionCard = ({ session }) => {
     marginBottom: "12px",
   }
 
-  useEffect(() => console.log(session), [])
+  const handleAddItem = () => {
+    setEvaluationItems((items) => [
+      ...items,
+      { title: "Evaluation Item", verdict: "Passed" },
+    ])
+  }
+
+  useEffect(() => {
+    fetchSession()
+  }, []) 
 
   return (
     <>
@@ -68,9 +119,29 @@ const SessionCard = ({ session }) => {
           <br></br>
           <Typography variant="p">{`Branch - ${session.branch}`}</Typography>
         </CardContent>
-        {/* <CardActions>
-          <Button onClick={() => handleOpen()}>View Info</Button>
-        </CardActions> */}
+        {user.type == "Instructor" && (
+          <CardActions>
+            {!isEvaluated && (
+              <Button
+                onClick={() => {
+                  handleOpen()
+                  fetchSession()
+                }}
+              >
+                Evaluate Session
+              </Button>
+            )}
+
+            {isEvaluated && (
+              <Button
+              color="success"
+              outlined
+              >
+                Evaluation Saved
+              </Button>
+            )}
+          </CardActions>
+        )}
       </Card>
 
       <Modal
@@ -93,15 +164,67 @@ const SessionCard = ({ session }) => {
               color={"#1976d2"}
               fontWeight={"bold"}
             >
-              {/* {name + " Branch"} */}
+              Evaluate Session
             </Typography>
 
             <IconButton onClick={handleClose}>
               <Close />
             </IconButton>
           </Box>
-          {/* <Typography mt={"12px"}>{address}</Typography> */}
+
           <Divider sx={{ marginTop: "12px", marginBottom: "12px" }} />
+
+          <Box>
+            <List>
+              {evaluationItems.map((item, index) => (
+                <ListItem>
+                  <TextField
+                    variant="standard"
+                    label="Evaluation Title"
+                    onChange={(e) =>
+                      handleChangeEvaluationTitle(e.target.value, index)
+                    }
+                    value={evaluationItems[index].title}
+                    sx={{ mr: "12px" }}
+                  />
+
+                  <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    // defaultValue="Passed"
+                    name="radio-buttons-group"
+                    row
+                    value={evaluationItems[index].verdict}
+                    onChange={(e) =>
+                      handleChangeEvaluationVerdict(e.target.value, index)
+                    }
+                  >
+                    <FormControlLabel
+                      value="Passed"
+                      control={<Radio />}
+                      label="Passed"
+                    />
+                    <FormControlLabel
+                      value="Failed"
+                      control={<Radio />}
+                      label="Failed"
+                    />
+                  </RadioGroup>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+
+          <Box display={"flex"} justifyContent={"space-between"}>
+            <Button onClick={() => handleAddItem()}>Add an item</Button>
+            <Button
+              onClick={() => {
+                handleSave()
+                handleClose()
+              }}
+            >
+              Save
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </>

@@ -19,6 +19,7 @@ import axios from "axios"
 
 import { visuallyHidden } from "@mui/utils"
 import { BranchContext } from "../../../contexts/BranchContext"
+import { UserContext } from "../../../contexts/UserContext"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -105,7 +106,7 @@ function EnhancedTableHead(props) {
             align="left"
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            width='300px'
+            width="300px"
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -185,19 +186,40 @@ export default function EnhancedTable() {
   const [rows, setRows] = useState([])
   const [isTableLoading, setIsTableLoading] = useState(true)
   const { branch } = useContext(BranchContext)
+  const { user } = useContext(UserContext)
+  const _ = require("lodash")
 
   // Fetch Students
   useEffect(() => {
     const fetchStudents = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
-      )
-      setRows(response.data)
+      let response
 
-      if (response)
-      setIsTableLoading(false)
+      if (user.type == "Admin") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${branch.name}/Student`
+        )
+        setRows(response.data)
 
-      console.log(response.data)
+        if (response) setIsTableLoading(false)
+      }
+
+      if (user.type == "Instructor") {
+        response = await axios.get(`${process.env.REACT_APP_URL}/users`)
+
+        let filteredResponse = response.data.map((item) => {
+          item.fullName = item.firstName + " " + item.lastName
+          item.instructorFullName = user.firstName + " " + user.lastName
+        })
+
+        filteredResponse = _.filter(response.data, (item) => {
+          return item.instructorId == user.id
+        })
+        setRows(filteredResponse)
+
+        console.log({ filteredResponse })
+
+        if (response) setIsTableLoading(false)
+      }
     }
 
     fetchStudents()
@@ -270,11 +292,15 @@ export default function EnhancedTable() {
                       selected={isItemSelected}
                     >
                       <TableCell component="th" id={labelId} scope="row">
-                        {row.firstName + ' ' + row.lastName}
+                        {row.firstName + " " + row.lastName}
                       </TableCell>
                       <TableCell align="left">{row.branches[0]}</TableCell>
                       {/* <TableCell align="left">{row.instructor.firstName + ' ' + row.instructor.lastName}</TableCell> */}
-                      <TableCell align="left">{row.instructor.fullName}</TableCell>
+                      <TableCell align="left">
+                        {user.type == "Admin"
+                          ? row.instructor.fullName
+                          : row.instructorFullName}
+                      </TableCell>
                       <TableCell align="left">{row.package}</TableCell>
                       {/* <TableCell align="left">{row.status}</TableCell> */}
                     </TableRow>
