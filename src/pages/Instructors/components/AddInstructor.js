@@ -10,9 +10,11 @@ import Autocomplete from "@mui/material/Autocomplete"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker"
+import { BranchesContext } from "../../../contexts/BranchesContext"
 import { useState } from "react"
 import dayjs from "dayjs"
 import axios from "axios"
+import { useContext } from "react"
 
 const style = {
   position: "absolute",
@@ -44,7 +46,8 @@ export default function AddInstructor() {
   const [birthDate, setBirthDate] = useState(dayjs("2000-01-01"))
   const [address, setAddress] = useState("")
   const [contactNo, setContactNo] = useState("")
-  const [branches, setBranches] = useState("")
+  const [selectedBranch, setSelectedBranch] = useState([])
+  const { branches } = useContext(BranchesContext)
   const type = "Instructor"
 
   const handleChangeDate = (newDate) => {
@@ -63,7 +66,7 @@ export default function AddInstructor() {
       birthDate,
       address,
       contactNo,
-      branches,
+      branches: selectedBranch,
       type,
     }
 
@@ -71,7 +74,6 @@ export default function AddInstructor() {
       `${process.env.REACT_APP_URL}/users`,
       data
     )
-
   }
 
   return (
@@ -207,10 +209,10 @@ export default function AddInstructor() {
               fullWidth
               multiple
               id="branches-select"
-              options={["Caloocan", "Makati", "Taguig", "Cavite"]}
-              // value={branches}
-              onChange={(e, newVal) => setBranches(newVal)}
-              // getOptionLabel={(option) => option.title}
+              options={branches}
+              value={selectedBranch}
+              onChange={(e, newVal) => setSelectedBranch(newVal)}
+              getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField {...params} label="Branches" variant="standard" />
               )}

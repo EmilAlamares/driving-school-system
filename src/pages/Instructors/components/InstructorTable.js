@@ -70,12 +70,6 @@ const headCells = [
     disablePadding: false,
     label: "Student",
   },
-  {
-    id: "status",
-    numeric: true,
-    disablePadding: false,
-    label: "Status",
-  },
 ]
 
 function EnhancedTableHead(props) {
@@ -283,7 +277,6 @@ export default function EnhancedTable() {
                       </TableCell>
                       <TableCell align="left">{row.branch}</TableCell>
                       <TableCell align="left">{row.studentNames[0]}</TableCell>
-                      <TableCell align="left">{row.status}</TableCell>
                     </TableRow>
                   )
                 })}

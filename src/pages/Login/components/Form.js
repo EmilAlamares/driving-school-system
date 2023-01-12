@@ -44,6 +44,7 @@ const Form = () => {
       localStorage.setItem("user", JSON.stringify(response.data.id))
       localStorage.setItem("firstName", JSON.stringify(response.data.firstName))
       localStorage.setItem("lastName", JSON.stringify(response.data.lastName))
+      localStorage.setItem("type", JSON.stringify(response.data.type))
       navigate("/")
     }
     else

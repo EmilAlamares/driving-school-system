@@ -9,7 +9,7 @@ import {
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded"
 import Chart from "./components/Chart"
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded"
-import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded"
+import LocationOnIcon from "@mui/icons-material/LocationOn"
 import { Link } from "react-router-dom"
 import { useContext, useState, useEffect } from "react"
 import { BranchContext } from "../../contexts/BranchContext"
@@ -27,25 +27,13 @@ const cardContentStyles = {
   justifyContent: "space-around",
 }
 
-// const todaySession = (
-//   <>
-//     <CardContent sx={cardContentStyles}>
-//       <Typography variant="h6">
-//         Today's Session
-//         <Typography>25</Typography>
-//       </Typography>
-//       <Avatar sx={{ bgcolor: "#8C7B69" }}>
-//         <CalendarMonthRoundedIcon />
-//       </Avatar>
-//     </CardContent>
-//   </>
-// )
-
 const Dashboard = () => {
   const [instructorCount, setInstructorCount] = useState(null)
   const [studentCount, setStudentCount] = useState(null)
+  const [branchesCount, setBranchesCount] = useState(null)
   const [isFetchingStudent, setIsFetchingStudent] = useState(true)
   const [isFetchingInstructor, setIsFetchingInstructor] = useState(true)
+  const [isFetchingBranches, setIsFetchingBranches] = useState(true)
   const { branch } = useContext(BranchContext)
 
   const totalStudents = (
@@ -82,6 +70,22 @@ const Dashboard = () => {
     </>
   )
 
+  const totalBranches = (
+    <>
+      <CardContent sx={cardContentStyles}>
+        <Typography variant="h6">
+          Branches
+          <Typography>
+            {isFetchingBranches ? "Fetching..." : branchesCount}
+          </Typography>
+        </Typography>
+        <Avatar sx={{ bgcolor: "#ffead5" }}>
+          <LocationOnIcon sx={{color: 'red'}}/>
+        </Avatar>
+      </CardContent>
+    </>
+  )
+
   useEffect(() => {
     const fetchStudents = async () => {
       setIsFetchingStudent(true)
@@ -103,8 +107,18 @@ const Dashboard = () => {
       setInstructorCount(response.data.length)
     }
 
+    const fetchBranches = async () => {
+      setIsFetchingBranches(true)
+      const response = await axios.get(`${process.env.REACT_APP_URL}/branches/`)
+
+      console.log(response)
+      setIsFetchingBranches(false)
+      setBranchesCount(response.data.length)
+    }
+
     fetchStudents()
     fetchInstructors()
+    fetchBranches()
   }, [branch])
   // eslint-disable-next-line
   const [chartData, setChartData] = useState({
@@ -149,14 +163,14 @@ const Dashboard = () => {
           {totalInstructors}
         </Card>
 
-        {/* <Card
+        <Card
           variant="outlined"
           sx={{ ...cardStyles, marginLeft: "20px" }}
           component={Link}
-          to="/schedules"
+          to="/branches"
         >
-          {todaySession}
-        </Card> */}
+          {totalBranches}
+        </Card>
       </Box>
 
       <Divider sx={{ marginTop: "24px" }} />

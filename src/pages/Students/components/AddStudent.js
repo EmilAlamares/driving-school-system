@@ -10,10 +10,13 @@ import Autocomplete from "@mui/material/Autocomplete"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker"
+import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker"
 import { useState } from "react"
 import dayjs from "dayjs"
 import axios from "axios"
 import { useEffect } from "react"
+import { useContext } from "react"
+import { BranchesContext } from "../../../contexts/BranchesContext"
 
 const style = {
   position: "absolute",
@@ -45,14 +48,55 @@ export default function AddStudent() {
   const [birthDate, setBirthDate] = useState(dayjs("2000-01-01"))
   const [address, setAddress] = useState("")
   const [contactNo, setContactNo] = useState("")
-  const [branches, setBranches] = useState(null)
+  const [selectedBranch, setSelectedBranch] = useState(null)
   const [selectedPackage, setSelectedPackage] = useState(null)
   const [instructor, setInstructor] = useState(null)
   const [instructorOptions, setInstructorOptions] = useState(null)
+  const { branches } = useContext(BranchesContext)
+  const [sessions, setSessions] = useState([
+    { date: dayjs("2023-01-01"), startTime: null, endTime: null },
+  ])
   const type = "Student"
 
   const handleChangeDate = (newDate) => {
     setBirthDate(newDate)
+  }
+
+  const handleAddSession = () => {
+    setSessions((sessions) => [
+      ...sessions,
+      { date: dayjs("2023-01-01"), startTime: "", endTime: "" },
+    ])
+  }
+
+  const handleChangeSessionDate = (newDate, index) => {
+    setSessions(
+      sessions.map((session, sessionIndex) => {
+        if (sessionIndex === index) session.date = newDate
+
+        return session
+      })
+    )
+  }
+
+  const handleChangeSessionStartTime = (newTime, index) => {
+    setSessions(
+      sessions.map((session, sessionIndex) => {
+        if (sessionIndex === index) session.startTime = newTime
+
+        return session
+      })
+    )
+  }
+
+  const handleChangeSessionEndTime = (newTime, index) => {
+    setSessions(
+      sessions.map((session, sessionIndex) => {
+        if (sessionIndex === index) session.endTime = newTime
+
+        return session
+      })
+    )
   }
 
   const handleSubmit = async () => {
@@ -67,10 +111,10 @@ export default function AddStudent() {
       birthDate,
       address,
       contactNo,
-      branches,
+      branches: selectedBranch,
       type,
       package: selectedPackage,
-      instructorId: instructor._id
+      instructorId: instructor._id,
     }
 
     const response = await axios.post(
@@ -78,21 +122,36 @@ export default function AddStudent() {
       data
     )
 
-    console.log(response)
+    const data2 = {
+      sessions,
+      instructorId: instructor._id,
+      studentId: response.data.id,
+      branch: selectedBranch,
+    }
+
+    await axios.post(
+      `${process.env.REACT_APP_URL}/sessions`,
+      data2
+    )
+
+    console.log({ response })
   }
 
   // Fetch Instructors
   useEffect(() => {
-    if (branches) {
+    console.log(selectedBranch)
+    if (selectedBranch) {
       const fetchInstructors = async () => {
-        const response = await axios.get(`${process.env.REACT_APP_URL}/branches/${branches}/Instructor`)
+        const response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${selectedBranch.name}/Instructor`
+        )
         setInstructorOptions(response.data)
         setInstructor(null)
         console.log(response)
       }
       fetchInstructors()
     } else setInstructor(null)
-  }, [branches])
+  }, [selectedBranch])
 
   return (
     <div>
@@ -228,16 +287,72 @@ export default function AddStudent() {
 
           <Divider sx={{ marginTop: "24px" }} />
 
+          <Box sx={{ mt: "12px", mb: "12px" }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {sessions.map((item, index) => (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    mt: "12px",
+                  }}
+                >
+                  <DesktopDatePicker
+                    label={`Session ${index + 1} Date`}
+                    inputFormat="MM-DD-YYYY"
+                    value={sessions[index].date}
+                    onChange={(newValue) =>
+                      handleChangeSessionDate(newValue, index)
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} variant="standard" />
+                    )}
+                  />
+                  <DesktopTimePicker
+                    value={sessions[index].startTime}
+                    onChange={(newValue) =>
+                      handleChangeSessionStartTime(newValue, index)
+                    }
+                    label="Start Time"
+                    renderInput={(params) => (
+                      <TextField {...params} variant="standard" />
+                    )}
+                  />
+                  <DesktopTimePicker
+                    value={sessions[index].endTime}
+                    onChange={(newValue) =>
+                      handleChangeSessionEndTime(newValue, index)
+                    }
+                    label="End Time"
+                    renderInput={(params) => (
+                      <TextField {...params} variant="standard" />
+                    )}
+                  />
+                </Box>
+              ))}
+            </LocalizationProvider>
+            <Button
+              sx={{ position: "absolute", right: "12px" }}
+              variant="text"
+              onClick={() => handleAddSession()}
+              size="small"
+            >
+              Add Session
+            </Button>
+          </Box>
+
+          <Divider sx={{ marginTop: "36px" }} />
           <Box mt={"12px"} display={"flex"} gap={"12px"}>
             <Autocomplete
               fullWidth
               // multiple
               id="branches-select"
-              options={["Caloocan", "Makati", "Taguig", "Cavite"]}
-              value={branches}
-              onChange={(e, newVal) => setBranches(newVal)}
+              options={branches}
+              value={selectedBranch}
+              onChange={(e, newVal) => setSelectedBranch(newVal)}
               isOptionEqualToValue={(option, value) => option === value}
-              // getOptionLabel={(option) => option.title}
+              getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField {...params} label="Branch" variant="standard" />
               )}
@@ -245,7 +360,7 @@ export default function AddStudent() {
 
             <Autocomplete
               fullWidth
-              disabled={!instructorOptions || !branches}
+              disabled={!instructorOptions || !selectedBranch}
               id="instructor-select"
               options={instructorOptions}
               value={instructor}
@@ -258,7 +373,7 @@ export default function AddStudent() {
               )}
             />
 
-            <Autocomplete
+            {/* <Autocomplete
               fullWidth
               // multiple
               id="packages-select"
@@ -270,7 +385,7 @@ export default function AddStudent() {
               renderInput={(params) => (
                 <TextField {...params} label="Package" variant="standard" />
               )}
-            />
+            /> */}
           </Box>
 
           <Box textAlign={"right"} mt={"24px"}>
@@ -280,7 +395,10 @@ export default function AddStudent() {
             <Button variant="text" sx={{ color: "orange" }}>
               Reset
             </Button>
-            <Button variant="text" onClick={() => handleSubmit()}>
+            <Button variant="text" onClick={() => {
+              handleSubmit()
+              handleClose()
+              }}>
               Save
             </Button>
           </Box>

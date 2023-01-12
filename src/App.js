@@ -31,7 +31,8 @@ import BranchMenu from "./components/BranchMenu"
 import InsertChartIcon from "@mui/icons-material/InsertChart"
 import LocationOnIcon from "@mui/icons-material/LocationOn"
 import { useNavigate } from "react-router"
-import { useEffect } from "react"
+import { useEffect, useContext } from "react"
+import { UserContext } from "./contexts/UserContext"
 
 const drawerWidth = 240
 
@@ -39,6 +40,7 @@ function App(props) {
   const { pathname } = useLocation()
   const { window } = props
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const {user} = useContext(UserContext)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -63,7 +65,7 @@ function App(props) {
           </ListItemButton>
         </ListItem>
 
-        <ListItem key="Students" disablePadding>
+{        <ListItem key="Students" disablePadding>
           <ListItemButton
             selected={pathname === "/students"}
             component={Link}
@@ -77,7 +79,7 @@ function App(props) {
             </ListItemIcon>
             <ListItemText primary="Students" />
           </ListItemButton>
-        </ListItem>
+        </ListItem>}
 
         <ListItem key="Instructors" disablePadding>
           <ListItemButton
@@ -158,6 +160,7 @@ function App(props) {
   let navigate = useNavigate()
 
   useEffect(() => {
+    console.log(user)
     if (!isLoggedIn) navigate("/login")
   })
   return (

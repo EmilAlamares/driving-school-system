@@ -7,15 +7,17 @@ const UserContextProvider = (props) => {
   //   JSON.parse(localStorage.getItem("user")) || {}
   // )
 
-  const items = { id: JSON.parse(localStorage.getItem('user')), firstName: JSON.parse(localStorage.getItem('firstName')), lastName: JSON.parse(localStorage.getItem('lastName')) }
+  const items = {
+    id: JSON.parse(localStorage.getItem("user")),
+    firstName: JSON.parse(localStorage.getItem("firstName")),
+    lastName: JSON.parse(localStorage.getItem("lastName")),
+    type: JSON.parse(localStorage.getItem("type")),
+  }
 
-  const [user, setUser] = useState(
-    items || {}
-  )
-
+  const [user, setUser] = useState(items || {})
 
   return (
-    <UserContext.Provider value={{ user, setUser}}>
+    <UserContext.Provider value={{ user, setUser }}>
       {props.children}
     </UserContext.Provider>
   )
