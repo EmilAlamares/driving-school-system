@@ -113,7 +113,7 @@ export default function AddStudent() {
       birthDate,
       address,
       contactNo,
-      branches: selectedBranch,
+      branches: selectedBranch.name,
       type,
       package: selectedPackage,
       instructorId: instructor._id,
@@ -128,7 +128,7 @@ export default function AddStudent() {
       sessions,
       instructorId: instructor._id,
       studentId: response.data.id,
-      branch: selectedBranch,
+      branch: selectedBranch.name,
     }
 
     await axios.post(`${process.env.REACT_APP_URL}/sessions`, data2)

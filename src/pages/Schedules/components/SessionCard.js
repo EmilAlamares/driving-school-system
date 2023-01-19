@@ -107,7 +107,7 @@ const SessionCard = ({ session }) => {
 
   useEffect(() => {
     fetchSession()
-  }, []) 
+  }, [])
 
   return (
     <>
@@ -133,11 +133,28 @@ const SessionCard = ({ session }) => {
             )}
 
             {isEvaluated && (
-              <Button
-              color="success"
-              outlined
-              >
+              <Button color="success" outlined>
                 Evaluation Saved
+              </Button>
+            )}
+          </CardActions>
+        )}
+        {user.type == "Student" && (
+          <CardActions>
+            {isEvaluated && (
+              <Button
+                onClick={() => {
+                  handleOpen()
+                  // fetchSession()
+                }}
+              >
+                View Evaluation
+              </Button>
+            )}
+
+            {!isEvaluated && (
+              <Button disabled outlined>
+                Not yet evaluated.
               </Button>
             )}
           </CardActions>
@@ -179,6 +196,9 @@ const SessionCard = ({ session }) => {
               {evaluationItems.map((item, index) => (
                 <ListItem>
                   <TextField
+                    InputProps={{
+                      readOnly: user.type == 'Student',
+                    }}
                     variant="standard"
                     label="Evaluation Title"
                     onChange={(e) =>
@@ -214,17 +234,19 @@ const SessionCard = ({ session }) => {
             </List>
           </Box>
 
-          <Box display={"flex"} justifyContent={"space-between"}>
-            <Button onClick={() => handleAddItem()}>Add an item</Button>
-            <Button
-              onClick={() => {
-                handleSave()
-                handleClose()
-              }}
-            >
-              Save
-            </Button>
-          </Box>
+          {user.type == "Instructor" && (
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Button onClick={() => handleAddItem()}>Add an item</Button>
+              <Button
+                onClick={() => {
+                  handleSave()
+                  handleClose()
+                }}
+              >
+                Save
+              </Button>
+            </Box>
+          )}
         </Box>
       </Modal>
     </>

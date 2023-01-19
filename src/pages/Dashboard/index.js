@@ -118,12 +118,22 @@ const Dashboard = () => {
     const fetchInstructors = async () => {
       setIsFetchingInstructor(true)
       let response
+      let response2
 
       if (user.type == "Admin") {
         response = await axios.get(
           `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
         )
         setInstructorCount(response.data.length)
+      }
+
+      if (user.type == 'Student')
+      {
+        response = await axios.get(`${process.env.REACT_APP_URL}/users/${user.id}`)
+        response2 = await axios.get(`${process.env.REACT_APP_URL}/users/${response.data.instructorId}`)
+
+        console.log(response2.data)
+        setInstructorCount(response2.data.firstName + ' ' + response2.data.lastName)
       }
 
       setIsFetchingInstructor(false)
@@ -168,16 +178,18 @@ const Dashboard = () => {
   return (
     <>
       <Box display="flex">
-        <Card
-          variant="outlined"
-          sx={cardStyles}
-          component={Link}
-          to="/students"
-        >
-          {totalStudents}
-        </Card>
+        {["Instructor", "Admin"].includes(user.type) && (
+          <Card
+            variant="outlined"
+            sx={cardStyles}
+            component={Link}
+            to="/students"
+          >
+            {totalStudents}
+          </Card>
+        )}
 
-        {user.type == "Admin" && (
+        {["Student", "Admin"].includes(user.type) && (
           <Card
             variant="outlined"
             sx={{ ...cardStyles, marginLeft: "20px" }}

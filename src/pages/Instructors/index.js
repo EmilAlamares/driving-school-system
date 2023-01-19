@@ -11,6 +11,7 @@ import InstructorTable from "./components/InstructorTable"
 import { useEffect, useState, useContext } from "react"
 import { BranchContext } from "../../contexts/BranchContext"
 import axios from "axios"
+import { UserContext } from "../../contexts/UserContext"
 
 const cardContentStyles = {
   display: "flex",
@@ -22,15 +23,28 @@ const Instructors = () => {
   const [instructorCount, setInstructorCount] = useState(null)
   const [isFetching, setIsFetching] = useState(true)
   const { branch } = useContext(BranchContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     const fetchInstructors = async () => {
+      let response
+      let response2
       setIsFetching(true)
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
-      )
 
-      setInstructorCount(response.data.length)
+      if (user.type == "Admin") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
+        )
+
+        setInstructorCount(response.data.length)
+      }
+
+      if (user.type == 'Student') {
+        response = await axios.get(`${process.env.REACT_APP_URL}/users/${user.id}`)
+        response2 = await axios.get(`${process.env.REACT_APP_URL}/users/${response.data.instructorId}`)
+
+        setInstructorCount(response2.data.firstName + ' ' + response2.data.lastName)
+      }
       setIsFetching(false)
     }
 

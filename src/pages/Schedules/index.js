@@ -19,15 +19,24 @@ const Schedules = () => {
     const fetchSessions = async () => {
       let response
 
-      if (user.type == "Admin")
+      if (user.type == "Admin"){
         response = await axios.get(
           `${process.env.REACT_APP_URL}/sessions/${branch.name}`
         )
+      console.log(response)
+      }
 
       if (user.type == "Instructor") {
         response = await axios.get(`${process.env.REACT_APP_URL}/sessions`)
         response.data = _.filter(response.data, item => {
           return item.instructorId === user.id
+        })
+      }
+
+      if (user.type == "Student") {
+        response = await axios.get(`${process.env.REACT_APP_URL}/sessions`)
+        response.data = _.filter(response.data, item => {
+          return item.studentId === user.id
         })
       }
 

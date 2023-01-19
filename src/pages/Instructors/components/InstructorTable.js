@@ -176,29 +176,71 @@ export default function EnhancedTable() {
   const [isTableLoading, setIsTableLoading] = useState(true)
   const { branch } = useContext(BranchContext)
   const { user } = useContext(UserContext)
+  const _ = require("lodash")
 
   // Fetch Instructors
   useEffect(() => {
     const fetchInstructors = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
-      )
+      let response
+      let response2
 
-      // Process data
-      response.data.forEach((element, index) => {
-        element.branch = element.branches.join(", ")
-        element.studentNames = element.students.map(
-          (student) =>
-            (student.studentFullName =
-              student.firstName + " " + student.lastName)
+      //   response = await axios.get(
+      //     `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
+      //   )
+
+      //   // Process data
+      //   response.data.forEach((element, index) => {
+      //     element.branch = element.branches.join(", ")
+      //     element.studentNames = element.students.map(
+      //       (student) =>
+      //         (student.studentFullName =
+      //           student.firstName + " " + student.lastName)
+      //     )
+      //   })
+
+      //   setRows(response.data)
+
+      //   if (response) setIsTableLoading(false)
+
+      //   console.log(response)
+      // }
+
+      if (user.type == "Admin") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
         )
-      })
 
-      setRows(response.data)
+        // Process data
+        response.data.forEach((element, index) => {
+          element.branch = element.branches.join(", ")
+          element.studentNames = element.students.map(
+            (student) =>
+              (student.studentFullName =
+                student.firstName + " " + student.lastName)
+          )
+        })
 
-      if (response) setIsTableLoading(false)
+        setRows(response.data)
 
-      console.log(response)
+        if (response) setIsTableLoading(false)
+
+        console.log(response)
+      }
+
+      if (user.type == "Student") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/users/${user.id}`
+        )
+
+        response2 = await axios.get(
+          `${process.env.REACT_APP_URL}/users/${response.data.instructorId}`
+        )
+
+        setRows([response2.data])
+        console.log(response2.data)
+
+        if (response) setIsTableLoading(false)
+      }
     }
 
     fetchInstructors()
@@ -275,10 +317,10 @@ export default function EnhancedTable() {
                       selected={isItemSelected}
                     >
                       <TableCell component="th" id={labelId} scope="row">
-                        {row.fullName}
+                        {['Instructor', 'Admin'].includes(user.type) ? row.fullName : row.firstName + ' ' + row.lastName}
                       </TableCell>
-                      <TableCell align="left">{row.branch}</TableCell>
-                      <TableCell align="left">{row.studentNames[0]}</TableCell>
+                      <TableCell align="left">{['Instructor', 'Admin'].includes(user.type) ? row.branch : row.branches.join(', ')}</TableCell>
+                      <TableCell align="left">{['Instructor', 'Admin'].includes(user.type) ? row.studentNames[0] : user.firstName + ' ' + user.lastName}</TableCell>
                     </TableRow>
                   )
                 })}

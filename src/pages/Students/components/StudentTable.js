@@ -70,12 +70,12 @@ const headCells = [
     disablePadding: false,
     label: "Instructor",
   },
-  {
-    id: "package",
-    numeric: true,
-    disablePadding: false,
-    label: "Package",
-  },
+  // {
+  //   id: "package",
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: "Package",
+  // },
   // {
   //   id: "status",
   //   numeric: true,
@@ -301,7 +301,7 @@ export default function EnhancedTable() {
                           ? row.instructor.fullName
                           : row.instructorFullName}
                       </TableCell>
-                      <TableCell align="left">{row.package}</TableCell>
+                      {/* <TableCell align="left">{row.package}</TableCell> */}
                       {/* <TableCell align="left">{row.status}</TableCell> */}
                     </TableRow>
                   )

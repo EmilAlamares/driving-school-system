@@ -139,7 +139,7 @@ function App(props) {
           </ListItem>
         )}
 
-        {user.type == "Admin" && (
+        {/* {user.type == "Admin" && (
           <ListItem key="Reports" disablePadding>
             <ListItemButton
               component={Link}
@@ -156,7 +156,7 @@ function App(props) {
               <ListItemText primary="Reports" />
             </ListItemButton>
           </ListItem>
-        )}
+        )} */}
       </List>
     </div>
   )
