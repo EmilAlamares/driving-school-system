@@ -127,6 +127,8 @@ export default function AddStudent() {
     const data2 = {
       sessions,
       instructorId: instructor._id,
+      studentName: firstName + " " + lastName,
+      instructorName: instructor.firstName + " " + instructor.lastName,
       studentId: response.data.id,
       branch: selectedBranch.name,
     }

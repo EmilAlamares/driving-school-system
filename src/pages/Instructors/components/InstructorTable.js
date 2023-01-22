@@ -3,6 +3,8 @@ import PropTypes from "prop-types"
 import Box from "@mui/material/Box"
 import Table from "@mui/material/Table"
 import TableBody from "@mui/material/TableBody"
+import { Close } from "@mui/icons-material"
+import { Divider, IconButton, Modal } from "@mui/material"
 import TableCell from "@mui/material/TableCell"
 import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
@@ -167,6 +169,8 @@ EnhancedTableToolbar.propTypes = {
 }
 
 export default function EnhancedTable() {
+  const [open, setOpen] = useState(false)
+  const handleClose = () => setOpen(false)
   const [order, setOrder] = React.useState("asc")
   const [orderBy, setOrderBy] = React.useState("calories")
   const [selected, setSelected] = React.useState([])
@@ -178,32 +182,46 @@ export default function EnhancedTable() {
   const { user } = useContext(UserContext)
   const _ = require("lodash")
 
+  const [instructorName, setInstructorName] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [instructorBranch, setInstructorBranch] = useState(null)
+  const [gender, setGender] = useState(null)
+  const [studentNames, setStudentNames] = useState([])
+  const [birthDate, setBirthdate] = useState(null)
+  const [contactNo, setContactNo] = useState(null)
+  const [address, setAddress] = useState(null)
+
+  const handleOpen = (data) => {
+    setInstructorName(
+      data.firstName + " " + data.middleName + " " + data.lastName
+    )
+    setEmail(data.email)
+    setInstructorBranch(data.branch)
+    setGender(data.gender)
+    setBirthdate(data.birthDate)
+    setContactNo(data.contactNo)
+    setAddress(data.address)
+    setStudentNames(data.studentNames)
+    setOpen(true)
+  }
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: "background.paper",
+    width: "450px",
+    borderRadius: "10px",
+    boxShadow: 24,
+    p: "24px",
+  }
+
   // Fetch Instructors
   useEffect(() => {
     const fetchInstructors = async () => {
       let response
       let response2
-
-      //   response = await axios.get(
-      //     `${process.env.REACT_APP_URL}/branches/${branch.name}/Instructor`
-      //   )
-
-      //   // Process data
-      //   response.data.forEach((element, index) => {
-      //     element.branch = element.branches.join(", ")
-      //     element.studentNames = element.students.map(
-      //       (student) =>
-      //         (student.studentFullName =
-      //           student.firstName + " " + student.lastName)
-      //     )
-      //   })
-
-      //   setRows(response.data)
-
-      //   if (response) setIsTableLoading(false)
-
-      //   console.log(response)
-      // }
 
       if (user.type == "Admin") {
         response = await axios.get(
@@ -315,12 +333,26 @@ export default function EnhancedTable() {
                       tabIndex={-1}
                       key={row.id}
                       selected={isItemSelected}
+                      onClick={() => {
+                        handleOpen(row)
+                      }}
+                      sx={{ cursor: "pointer" }}
                     >
                       <TableCell component="th" id={labelId} scope="row">
-                        {['Instructor', 'Admin'].includes(user.type) ? row.fullName : row.firstName + ' ' + row.lastName}
+                        {["Instructor", "Admin"].includes(user.type)
+                          ? row.fullName
+                          : row.firstName + " " + row.lastName}
                       </TableCell>
-                      <TableCell align="left">{['Instructor', 'Admin'].includes(user.type) ? row.branch : row.branches.join(', ')}</TableCell>
-                      <TableCell align="left">{['Instructor', 'Admin'].includes(user.type) ? row.studentNames[0] : user.firstName + ' ' + user.lastName}</TableCell>
+                      <TableCell align="left">
+                        {["Instructor", "Admin"].includes(user.type)
+                          ? row.branch
+                          : row.branches.join(", ")}
+                      </TableCell>
+                      <TableCell align="left">
+                        {["Instructor", "Admin"].includes(user.type)
+                          ? row.studentNames[0]
+                          : user.firstName + " " + user.lastName}
+                      </TableCell>
                     </TableRow>
                   )
                 })}
@@ -346,6 +378,142 @@ export default function EnhancedTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <Box>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              overflow={"hidden"}
+            >
+              <Typography
+                id="modal-modal-title"
+                variant="h4"
+                component="h2"
+                color={"#1976d2"}
+                fontWeight={"bold"}
+              >
+                Instructor Information
+              </Typography>
+
+              <IconButton onClick={handleClose}>
+                <Close />
+              </IconButton>
+            </Box>
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box mt={"12px"} textAlign={"center"}>
+              <Box>
+                <Typography variant="h6">{instructorName}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="p">{email}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="p">{instructorBranch} Branch</Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box
+              mt={"12px"}
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Gender</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{gender}</Typography>
+              </Box>
+            </Box>
+
+            <Box
+              mt={"8px"}
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Birthdate</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">
+                  {new Date(birthDate).toLocaleDateString()}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+              mt={"8px"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Contact No.</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{contactNo}</Typography>
+              </Box>
+            </Box>
+
+            <Box
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+              mt={"8px"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Address</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{address}</Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box mt={"12px"} textAlign={"center"} mb={"12px"}>
+              <Box>
+                <Box>
+                  <Typography variant="h6">Students</Typography>
+                </Box>
+              </Box>
+
+              {studentNames.map((student) => (
+                <Box>
+                  <Typography variant="p">{student}</Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Modal>
+      </Box>
     </Box>
   )
 }

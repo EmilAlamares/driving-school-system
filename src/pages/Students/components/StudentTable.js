@@ -2,6 +2,9 @@ import * as React from "react"
 import PropTypes from "prop-types"
 import Box from "@mui/material/Box"
 import Table from "@mui/material/Table"
+// import Button from "@mui/material/Button"
+import { Close } from "@mui/icons-material"
+import { Divider, IconButton, Modal } from "@mui/material"
 import TableBody from "@mui/material/TableBody"
 import TableCell from "@mui/material/TableCell"
 import TableContainer from "@mui/material/TableContainer"
@@ -70,18 +73,6 @@ const headCells = [
     disablePadding: false,
     label: "Instructor",
   },
-  // {
-  //   id: "package",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "Package",
-  // },
-  // {
-  //   id: "status",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "Status",
-  // },
 ]
 
 function EnhancedTableHead(props) {
@@ -178,6 +169,8 @@ EnhancedTableToolbar.propTypes = {
 }
 
 export default function EnhancedTable() {
+  const [open, setOpen] = useState(false)
+  const handleClose = () => setOpen(false)
   const [order, setOrder] = React.useState("asc")
   const [orderBy, setOrderBy] = React.useState("calories")
   const [selected, setSelected] = React.useState([])
@@ -188,6 +181,39 @@ export default function EnhancedTable() {
   const { branch } = useContext(BranchContext)
   const { user } = useContext(UserContext)
   const _ = require("lodash")
+
+  const [studentName, setStudentName] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [studentBranch, setStudentBranch] = useState(null)
+  const [gender, setGender] = useState(null)
+  const [birthDate, setBirthdate] = useState(null)
+  const [contactNo, setContactNo] = useState(null)
+  const [address, setAddress] = useState(null)
+  const [instructorName, setInstructorName] = useState(null)
+  
+  const handleOpen = (data) => {
+    setStudentName(data.firstName + ' ' + data.middleName + ' ' + data.lastName)
+    setEmail(data.email)
+    setStudentBranch(data.branches[0])
+    setGender(data.gender)
+    setBirthdate(data.birthDate)
+    setContactNo(data.contactNo)
+    setAddress(data.address)
+    setInstructorName(data.instructor.fullName)
+    setOpen(true)
+  }
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: "background.paper",
+    width: "450px",
+    borderRadius: "10px",
+    boxShadow: 24,
+    p: "24px",
+  }
 
   // Fetch Students
   useEffect(() => {
@@ -290,19 +316,21 @@ export default function EnhancedTable() {
                       tabIndex={-1}
                       key={row._id}
                       selected={isItemSelected}
+                      onClick={() => {
+                        console.log(row)
+                        handleOpen(row)
+                      }}
+                      sx={{ cursor: "pointer" }}
                     >
                       <TableCell component="th" id={labelId} scope="row">
                         {row.firstName + " " + row.lastName}
                       </TableCell>
                       <TableCell align="left">{row.branches[0]}</TableCell>
-                      {/* <TableCell align="left">{row.instructor.firstName + ' ' + row.instructor.lastName}</TableCell> */}
                       <TableCell align="left">
                         {user.type == "Admin"
                           ? row.instructor.fullName
                           : row.instructorFullName}
                       </TableCell>
-                      {/* <TableCell align="left">{row.package}</TableCell> */}
-                      {/* <TableCell align="left">{row.status}</TableCell> */}
                     </TableRow>
                   )
                 })}
@@ -328,6 +356,151 @@ export default function EnhancedTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+      <Box>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              overflow={"hidden"}
+            >
+              <Typography
+                id="modal-modal-title"
+                variant="h4"
+                component="h2"
+                color={"#1976d2"}
+                fontWeight={"bold"}
+              >
+                Student Information
+              </Typography>
+
+              <IconButton onClick={handleClose}>
+                <Close />
+              </IconButton>
+            </Box>
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box mt={"12px"} textAlign={"center"}>
+              <Box>
+                <Typography variant="h6">
+                  {studentName}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="p">
+                  {email}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="p">{studentBranch} Branch</Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box
+              mt={"12px"}
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Gender</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{gender}</Typography>
+              </Box>
+            </Box>
+
+            <Box
+              mt={"8px"}
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Birthdate</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{new Date(birthDate).toLocaleDateString()}</Typography>
+              </Box>
+            </Box>
+
+            <Box
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+              mt={"8px"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Contact No.</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{contactNo}</Typography>
+              </Box>
+            </Box>
+
+            <Box
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+              mt={"8px"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Address</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">
+                  {address}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ marginTop: "24px" }} />
+
+            <Box
+              mt={"12px"}
+              display={"flex"}
+              gap={"12px"}
+              justifyContent={"space-between"}
+              alignItems={"top"}
+            >
+              <Box flex={1}>
+                <Box>
+                  <Typography variant="p">Instructor</Typography>
+                </Box>
+              </Box>
+
+              <Box flex={3}>
+                <Typography variant="p">{instructorName}</Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Modal>
+      </Box>
     </Box>
   )
 }

@@ -27,6 +27,7 @@ const SessionCard = ({ session }) => {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const { user } = useContext(UserContext)
+  const [isEditing, setIsEditing] = useState(false)
   const [isEvaluated, setIsEvaluated] = useState(false)
   const [evaluationItems, setEvaluationItems] = useState([
     {
@@ -69,6 +70,7 @@ const SessionCard = ({ session }) => {
     )
 
     console.log(response)
+    setIsEditing(false)
   }
 
   const handleChangeEvaluationVerdict = (newValue, index) => {
@@ -133,19 +135,25 @@ const SessionCard = ({ session }) => {
             )}
 
             {isEvaluated && (
-              <Button color="success" outlined>
+              <Button
+                color="success"
+                outlined
+                onClick={() => {
+                  handleOpen()
+                  fetchSession()
+                }}
+              >
                 Evaluation Saved
               </Button>
             )}
           </CardActions>
         )}
-        {user.type == "Student" && (
+        {(user.type == "Student" || user.type == "Admin") && (
           <CardActions>
             {isEvaluated && (
               <Button
                 onClick={() => {
                   handleOpen()
-                  // fetchSession()
                 }}
               >
                 View Evaluation
@@ -154,7 +162,7 @@ const SessionCard = ({ session }) => {
 
             {!isEvaluated && (
               <Button disabled outlined>
-                Not yet evaluated.
+                Not yet evaluated
               </Button>
             )}
           </CardActions>
@@ -197,7 +205,7 @@ const SessionCard = ({ session }) => {
                 <ListItem>
                   <TextField
                     InputProps={{
-                      readOnly: user.type == 'Student',
+                      readOnly: user.type == "Student" || isEvaluated,
                     }}
                     variant="standard"
                     label="Evaluation Title"
@@ -214,9 +222,14 @@ const SessionCard = ({ session }) => {
                     name="radio-buttons-group"
                     row
                     value={evaluationItems[index].verdict}
-                    onChange={(e) =>
-                      handleChangeEvaluationVerdict(e.target.value, index)
-                    }
+                    onChange={(e) => {
+                      if (
+                        (user.type == "Instructor" && !isEvaluated) ||
+                        isEditing
+                      ) {
+                        handleChangeEvaluationVerdict(e.target.value, index)
+                      }
+                    }}
                   >
                     <FormControlLabel
                       value="Passed"
@@ -234,7 +247,7 @@ const SessionCard = ({ session }) => {
             </List>
           </Box>
 
-          {user.type == "Instructor" && (
+          {((user.type == "Instructor" && !isEvaluated) || isEditing) && (
             <Box display={"flex"} justifyContent={"space-between"}>
               <Button onClick={() => handleAddItem()}>Add an item</Button>
               <Button
@@ -244,6 +257,18 @@ const SessionCard = ({ session }) => {
                 }}
               >
                 Save
+              </Button>
+            </Box>
+          )}
+
+          {!isEditing && isEvaluated && user.type == "Instructor" && (
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Button
+                onClick={() => {
+                  setIsEditing(true)
+                }}
+              >
+                Edit
               </Button>
             </Box>
           )}

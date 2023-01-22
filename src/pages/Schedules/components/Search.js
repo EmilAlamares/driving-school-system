@@ -1,5 +1,3 @@
-import BranchCard from "./components/BranchCard"
-import AddIcon from "@mui/icons-material/Add"
 import Fab from "@mui/material/Fab"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -9,17 +7,19 @@ import { Close } from "@mui/icons-material"
 import { Divider, IconButton } from "@mui/material"
 import TextField from "@mui/material/TextField"
 import { useEffect, useState, useContext } from "react"
-import axios from "axios"
+// import axios from "axios"
+// import Autocomplete from "@mui/material/Autocomplete"
+import { BranchesContext } from "../../../contexts/BranchesContext"
+import SearchIcon from "@mui/icons-material/Search"
 
-import { BranchesContext } from "../../contexts/BranchesContext"
-
-const Branches = () => {
+const Search = ({handleSearch}) => {
   const [open, setOpen] = useState(false)
+  const [studentName, setStudentName] = useState(null)
+  const [instructorName, setInstructorName] = useState(null)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  const [name, setName] = useState(null)
-  const [address, setAddress] = useState(null)
-  const { branches, setBranches } = useContext(BranchesContext)
+  const [selectedBranch, setSelectedBranch] = useState([])
+  const { branches } = useContext(BranchesContext)
 
   const style = {
     position: "absolute",
@@ -33,41 +33,16 @@ const Branches = () => {
     p: "24px",
   }
 
-  const handleSubmit = async () => {
-    const data = {
-      name,
-      address,
-    }
-
-    const response = await axios.post(
-      `${process.env.REACT_APP_URL}/branches`,
-      data
-    )
-
-    console.log(response)
-    fetchBranches()
-  }
-
-  const fetchBranches = async () => {
-    const response = await axios.get(`${process.env.REACT_APP_URL}/branches`)
-
-    setBranches(response.data)
-  }
-
   return (
-    <div>
+    <>
       <Fab
         color="primary"
         aria-label="add"
         sx={{ position: "fixed", right: 30, bottom: 30 }}
         onClick={handleOpen}
       >
-        <AddIcon />
+        <SearchIcon fontSize="large" />
       </Fab>
-      {branches &&
-        branches.map((branch) => (
-          <BranchCard name={branch.name} address={branch.address} />
-        ))}
 
       <Modal
         open={open}
@@ -89,7 +64,7 @@ const Branches = () => {
               color={"#1976d2"}
               fontWeight={"bold"}
             >
-              New Branch
+              Search Schedules
             </Typography>
 
             <IconButton onClick={handleClose}>
@@ -101,23 +76,38 @@ const Branches = () => {
           <Box>
             <TextField
               variant="standard"
-              label="Branch Name"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
+              label="Student Name"
+              onChange={(e) => setStudentName(e.target.value)}
+              value={studentName}
               fullWidth
               autoComplete="off"
             />
           </Box>
-          <Box mt={"12px"}>
+          <Box>
             <TextField
               variant="standard"
-              label="Address"
-              onChange={(e) => setAddress(e.target.value)}
-              value={address}
+              label="Instructor Name"
+              onChange={(e) => setInstructorName(e.target.value)}
+              value={instructorName}
               fullWidth
               autoComplete="off"
             />
           </Box>
+          {/* <Box>
+          <Autocomplete
+              fullWidth
+              multiple
+              id="branches-select"
+              options={branches}
+              value={selectedBranch}
+              onChange={(e, newVal) => setSelectedBranch(newVal)}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField {...params} label="Branches" variant="standard" />
+              )}
+            />
+          </Box> */}
+
 
           <Box textAlign={"right"} mt={"24px"}>
             <Button variant="text" sx={{ color: "red" }} onClick={handleClose}>
@@ -129,17 +119,17 @@ const Branches = () => {
             <Button
               variant="text"
               onClick={() => {
-                handleSubmit()
+                handleSearch(studentName, instructorName)
                 handleClose()
               }}
             >
-              Save
+              Search
             </Button>
           </Box>
         </Box>
       </Modal>
-    </div>
+    </>
   )
 }
 
-export default Branches
+export default Search
