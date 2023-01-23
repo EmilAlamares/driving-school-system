@@ -2,8 +2,8 @@ import * as React from "react"
 import PropTypes from "prop-types"
 import Box from "@mui/material/Box"
 import Table from "@mui/material/Table"
-// import Button from "@mui/material/Button"
-import { Close } from "@mui/icons-material"
+import Button from "@mui/material/Button"
+import { Close, TextField } from "@mui/icons-material"
 import { Divider, IconButton, Modal } from "@mui/material"
 import TableBody from "@mui/material/TableBody"
 import TableCell from "@mui/material/TableCell"
@@ -23,6 +23,8 @@ import axios from "axios"
 import { visuallyHidden } from "@mui/utils"
 import { BranchContext } from "../../../contexts/BranchContext"
 import { UserContext } from "../../../contexts/UserContext"
+import ManageBranchModal from "./ManageBranchModal"
+import ManageInstructorModal from "./ManageInstructorModal"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -190,16 +192,19 @@ export default function EnhancedTable() {
   const [contactNo, setContactNo] = useState(null)
   const [address, setAddress] = useState(null)
   const [instructorName, setInstructorName] = useState(null)
-  
+
   const handleOpen = (data) => {
-    setStudentName(data.firstName + ' ' + data.middleName + ' ' + data.lastName)
+    setStudentName(data.firstName + " " + data.middleName + " " + data.lastName)
     setEmail(data.email)
     setStudentBranch(data.branches[0])
     setGender(data.gender)
     setBirthdate(data.birthDate)
     setContactNo(data.contactNo)
     setAddress(data.address)
-    setInstructorName(data.instructor.fullName)
+
+    if (user.type == "Admin") setInstructorName(data.instructor.fullName)
+    else setInstructorName(data.instructorFullName)
+
     setOpen(true)
   }
 
@@ -386,25 +391,18 @@ export default function EnhancedTable() {
               </IconButton>
             </Box>
             <Divider sx={{ marginTop: "24px" }} />
-
             <Box mt={"12px"} textAlign={"center"}>
               <Box>
-                <Typography variant="h6">
-                  {studentName}
-                </Typography>
+                <Typography variant="h6">{studentName}</Typography>
               </Box>
               <Box>
-                <Typography variant="p">
-                  {email}
-                </Typography>
+                <Typography variant="p">{email}</Typography>
               </Box>
               <Box>
                 <Typography variant="p">{studentBranch} Branch</Typography>
               </Box>
             </Box>
-
             <Divider sx={{ marginTop: "24px" }} />
-
             <Box
               mt={"12px"}
               display={"flex"}
@@ -422,7 +420,6 @@ export default function EnhancedTable() {
                 <Typography variant="p">{gender}</Typography>
               </Box>
             </Box>
-
             <Box
               mt={"8px"}
               display={"flex"}
@@ -437,10 +434,11 @@ export default function EnhancedTable() {
               </Box>
 
               <Box flex={3}>
-                <Typography variant="p">{new Date(birthDate).toLocaleDateString()}</Typography>
+                <Typography variant="p">
+                  {new Date(birthDate).toLocaleDateString()}
+                </Typography>
               </Box>
             </Box>
-
             <Box
               display={"flex"}
               gap={"12px"}
@@ -458,7 +456,6 @@ export default function EnhancedTable() {
                 <Typography variant="p">{contactNo}</Typography>
               </Box>
             </Box>
-
             <Box
               display={"flex"}
               gap={"12px"}
@@ -473,14 +470,10 @@ export default function EnhancedTable() {
               </Box>
 
               <Box flex={3}>
-                <Typography variant="p">
-                  {address}
-                </Typography>
+                <Typography variant="p">{address}</Typography>
               </Box>
             </Box>
-
             <Divider sx={{ marginTop: "24px" }} />
-
             <Box
               mt={"12px"}
               display={"flex"}
@@ -498,6 +491,18 @@ export default function EnhancedTable() {
                 <Typography variant="p">{instructorName}</Typography>
               </Box>
             </Box>
+
+            {user.type == "Admin" && (
+              <>
+                <Divider sx={{ marginTop: "24px" }} />
+                <Box mt={"12px"}>
+                  <ManageBranchModal branch={studentBranch} />
+                </Box>
+                <Box>
+                  <ManageInstructorModal branch={studentBranch} />
+                </Box>
+              </>
+            )}
           </Box>
         </Modal>
       </Box>
