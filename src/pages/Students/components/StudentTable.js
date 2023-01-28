@@ -185,6 +185,7 @@ export default function EnhancedTable() {
   const _ = require("lodash")
 
   const [studentName, setStudentName] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [email, setEmail] = useState(null)
   const [studentBranch, setStudentBranch] = useState(null)
   const [gender, setGender] = useState(null)
@@ -196,6 +197,7 @@ export default function EnhancedTable() {
   const handleOpen = (data) => {
     setStudentName(data.firstName + " " + data.middleName + " " + data.lastName)
     setEmail(data.email)
+    setUserId(data._id)
     setStudentBranch(data.branches[0])
     setGender(data.gender)
     setBirthdate(data.birthDate)
@@ -496,10 +498,10 @@ export default function EnhancedTable() {
               <>
                 <Divider sx={{ marginTop: "24px" }} />
                 <Box mt={"12px"}>
-                  <ManageBranchModal branch={studentBranch} />
+                  <ManageBranchModal branch={studentBranch} email={email} userId={userId}/>
                 </Box>
                 <Box>
-                  <ManageInstructorModal branch={studentBranch} />
+                  <ManageInstructorModal branch={studentBranch} email={email} userId={userId} instructorName={instructorName}/>
                 </Box>
               </>
             )}

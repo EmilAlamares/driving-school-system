@@ -69,21 +69,6 @@ const Students = () => {
         </CardContent>
       </Card>
 
-      {/* <Card
-        variant="outlined"
-        sx={{ display: "inline-block", marginLeft: "20px", width: 250 }}
-      >
-        <CardContent sx={cardContentStyles}>
-          <Typography variant="h6">
-            In Session
-            <Typography>46</Typography>
-          </Typography>
-          <Avatar sx={{ bgcolor: "#8C7B69" }}>
-            <AccessTimeFilled />
-          </Avatar>
-        </CardContent>
-      </Card> */}
-
       <Divider sx={{ marginTop: "10px" }} />
 
       <Box paddingTop={"10px"}>

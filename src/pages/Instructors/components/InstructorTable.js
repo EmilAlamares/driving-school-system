@@ -18,6 +18,7 @@ import AddInstructor from "./AddInstructor"
 import LinearProgress from "@mui/material/LinearProgress"
 import { useState, useEffect } from "react"
 import axios from "axios"
+import ManageBranchModal from "./ManageBranchModal"
 
 import { visuallyHidden } from "@mui/utils"
 import { useContext } from "react"
@@ -183,6 +184,7 @@ export default function EnhancedTable() {
   const _ = require("lodash")
 
   const [instructorName, setInstructorName] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [email, setEmail] = useState(null)
   const [instructorBranch, setInstructorBranch] = useState(null)
   const [gender, setGender] = useState(null)
@@ -196,6 +198,7 @@ export default function EnhancedTable() {
       data.firstName + " " + data.middleName + " " + data.lastName
     )
     setEmail(data.email)
+    setUserId(data._id)
     setInstructorBranch(data.branch)
     setGender(data.gender)
     setBirthdate(data.birthDate)
@@ -511,6 +514,19 @@ export default function EnhancedTable() {
                 </Box>
               ))}
             </Box>
+
+            {user.type == "Admin" && (
+              <>
+                <Divider sx={{ marginTop: "24px" }} />
+                <Box mt={"12px"}>
+                  <ManageBranchModal
+                    branch={instructorBranch}
+                    email={email}
+                    userId={userId}
+                  />
+                </Box>
+              </>
+            )}
           </Box>
         </Modal>
       </Box>

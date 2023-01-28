@@ -21,7 +21,8 @@ import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker"
 const _ = require("lodash")
 
 export default function ManageBranchModal({ branch, email, userId }) {
-  const { branches } = useContext(BranchesContext)
+  let { branches } = useContext(BranchesContext)
+  branches = branches.map(item => item.name)
   const style = {
     position: "absolute",
     top: "50%",
@@ -35,7 +36,7 @@ export default function ManageBranchModal({ branch, email, userId }) {
   }
 
   const [open, setOpen] = useState(false)
-  const [selectedBranch, setSelectedBranch] = useState(null)
+  const [selectedBranch, setSelectedBranch] = useState(branch.split(", "))
   const [instructor, setInstructor] = useState(null)
   const [instructorOptions, setInstructorOptions] = useState(null)
   const [sessions, setSessions] = useState([
@@ -88,20 +89,19 @@ export default function ManageBranchModal({ branch, email, userId }) {
 
   const handleSubmit = async () => {
     let data = {
-      email,
       userId,
-      selectedBranch: selectedBranch.name,
-      instructor,
-      sessions,
-      type: 'Student'
+      selectedBranch,
+      type: 'Instructor'
     }
+
+    console.log(data)
 
     const response = await axios.put(
       `${process.env.REACT_APP_URL}/users/update`,
       data
     )
 
-    console.log(response)
+    // console.log(response)
   }
 
   // Fetch Instructors
@@ -152,7 +152,20 @@ export default function ManageBranchModal({ branch, email, userId }) {
           <Divider sx={{ marginTop: "24px" }} />
 
           <Box>
-            <Autocomplete
+          <Autocomplete
+              fullWidth
+              multiple
+              id="branches-select"
+              options={branches}
+              value={selectedBranch}
+              onChange={(e, newVal) => setSelectedBranch(newVal)}
+              // getOptionLabel={(option) => option}
+              // isOptionEqualToValue={(option, value) => option == value}
+              renderInput={(params) => (
+                <TextField {...params} label="Branches" variant="standard" />
+              )}
+            />
+            {/* <Autocomplete
               fullWidth
               // multiple
               id="branches-select"
@@ -177,75 +190,7 @@ export default function ManageBranchModal({ branch, email, userId }) {
               renderInput={(params) => (
                 <TextField {...params} label="Instructor" variant="standard" />
               )}
-            />
-          </Box>
-
-          <Box sx={{ mt: "12px", mb: "12px" }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {sessions.map((item, index) => (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    mt: "12px",
-                  }}
-                >
-                  <DesktopDatePicker
-                    label={`Session ${index + 1} Date`}
-                    inputFormat="MM-DD-YYYY"
-                    value={sessions[index].date}
-                    onChange={(newValue) =>
-                      handleChangeSessionDate(newValue, index)
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        disabled={instructor == null}
-                      />
-                    )}
-                  />
-                  <DesktopTimePicker
-                    value={sessions[index].startTime}
-                    onChange={(newValue) =>
-                      handleChangeSessionStartTime(newValue, index)
-                    }
-                    label="Start Time"
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        disabled={instructor == null}
-                      />
-                    )}
-                  />
-                  <DesktopTimePicker
-                    value={sessions[index].endTime}
-                    onChange={(newValue) =>
-                      handleChangeSessionEndTime(newValue, index)
-                    }
-                    label="End Time"
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        disabled={instructor == null}
-                      />
-                    )}
-                  />
-                </Box>
-              ))}
-            </LocalizationProvider>
-            <Button
-              sx={{ position: "absolute", right: "12px" }}
-              disabled={instructor == null}
-              variant="text"
-              onClick={() => handleAddSession()}
-              size="small"
-            >
-              Add Session
-            </Button>
+            /> */}
           </Box>
 
           <Box textAlign={"right"} mt={"24px"}>

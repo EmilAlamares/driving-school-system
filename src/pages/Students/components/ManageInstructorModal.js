@@ -20,7 +20,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker"
 import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker"
 const _ = require("lodash")
 
-export default function ManageInstructorModal({ branch }) {
+export default function ManageInstructorModal({ branch, email, userId, instructorName }) {
   const { branches } = useContext(BranchesContext)
   const style = {
     position: "absolute",
@@ -85,21 +85,36 @@ export default function ManageInstructorModal({ branch }) {
     setOpen(false)
   }
 
-  const handleSubmit = () => {
-    // console.log(selectedBranch)
-    console.log(branch)
+  const handleSubmit = async () => {
+    let data = {
+      email,
+      userId,
+      instructor,
+      sessions,
+      selectedBranch: branch,
+      type: "Student",
+    }
+
+    // console.log(data)
+
+    const response = await axios.put(
+      `${process.env.REACT_APP_URL}/users/update`,
+      data
+    )
+
+    console.log(response)
   }
 
   // Fetch Instructors
   useEffect(() => {
-      const fetchInstructors = async () => {
-        const response = await axios.get(
-          `${process.env.REACT_APP_URL}/branches/${branch}/Instructor`
-        )
-        setInstructorOptions(response.data)
-        setInstructor(null)
-      }
-      fetchInstructors()
+    const fetchInstructors = async () => {
+      const response = await axios.get(
+        `${process.env.REACT_APP_URL}/branches/${branch}/Instructor`
+      )
+      setInstructorOptions(response.data)
+      setInstructor(null)
+    }
+    fetchInstructors()
   }, [])
 
   return (
@@ -153,7 +168,8 @@ export default function ManageInstructorModal({ branch }) {
             <Autocomplete
               fullWidth
               id="instructor-select"
-              options={instructorOptions}
+              // options={instructorOptions}
+              options={_.filter(instructorOptions, (item) => item.fullName != instructorName)}
               value={instructor}
               onChange={(e, newVal) => setInstructor(newVal)}
               getOptionLabel={(option) => option.fullName}
