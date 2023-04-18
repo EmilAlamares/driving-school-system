@@ -42,7 +42,7 @@ const AccountMenu = () => {
         onClose={handleClose}
         sx={{ mt: "5px" }}
       >
-        <MenuItem onClick={handleClose}>Account Settings</MenuItem>
+        {/* <MenuItem onClick={handleClose}>Account Settings</MenuItem> */}
         <MenuItem onClick={handleLogout}>Log Out</MenuItem>
       </Menu>
     </>

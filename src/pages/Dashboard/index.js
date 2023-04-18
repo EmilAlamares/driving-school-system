@@ -15,6 +15,8 @@ import { useContext, useState, useEffect } from "react"
 import { BranchContext } from "../../contexts/BranchContext"
 import { UserContext } from "../../contexts/UserContext"
 import axios from "axios"
+import moment from "moment"
+const _ = require("lodash")
 
 const cardStyles = {
   width: "250px",
@@ -35,7 +37,7 @@ const Dashboard = () => {
   const [isFetchingStudent, setIsFetchingStudent] = useState(true)
   const [isFetchingInstructor, setIsFetchingInstructor] = useState(true)
   const [isFetchingBranches, setIsFetchingBranches] = useState(true)
-  const _ = require("lodash")
+  // const _ = require("lodash")
   const { branch } = useContext(BranchContext)
   const { user } = useContext(UserContext)
 
@@ -60,7 +62,7 @@ const Dashboard = () => {
     <>
       <CardContent sx={cardContentStyles}>
         <Typography variant="h6">
-          Instructors
+        {user.type == 'Admin' ? 'Instructors' : 'Instructor'}
           <Typography>
             {" "}
             {isFetchingInstructor ? "Fetching..." : instructorCount}
@@ -89,10 +91,36 @@ const Dashboard = () => {
     </>
   )
 
+  // eslint-disable-next-line
+  const [chartData, setChartData] = useState({
+    labels: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    datasets: [
+      {
+        label: "Students",
+        data: [1],
+      },
+    ],
+  })
+
   useEffect(() => {
     const fetchStudents = async () => {
       setIsFetchingStudent(true)
       let response
+      let dataset = []
+      const d = new Date()
 
       if (user.type == "Admin") {
         response = await axios.get(
@@ -100,6 +128,43 @@ const Dashboard = () => {
         )
         setIsFetchingStudent(false)
         setStudentCount(response.data.length)
+
+        response = await axios.get(`${process.env.REACT_APP_URL}/users`)
+
+        // Fetch student count per month
+        for (let i = 0; i < 12; i++) {
+          dataset[i] = _.filter(
+            response.data,
+            (item) =>
+              moment(item.createdAt).month() == i &&
+              moment(item.createdAt).year() == d.getFullYear()
+          ).length
+        }
+
+        dataset = dataset.map(item => item == 0 ? 'N/A' : item)
+
+        setChartData({
+          labels: [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ],
+          datasets: [
+            {
+              label: "Students",
+              data: dataset,
+            },
+          ],
+        })
       }
 
       if (user.type == "Instructor") {
@@ -127,13 +192,17 @@ const Dashboard = () => {
         setInstructorCount(response.data.length)
       }
 
-      if (user.type == 'Student')
-      {
-        response = await axios.get(`${process.env.REACT_APP_URL}/users/${user.id}`)
-        response2 = await axios.get(`${process.env.REACT_APP_URL}/users/${response.data.instructorId}`)
+      if (user.type == "Student") {
+        response = await axios.get(
+          `${process.env.REACT_APP_URL}/users/${user.id}`
+        )
+        response2 = await axios.get(
+          `${process.env.REACT_APP_URL}/users/${response.data.instructorId}`
+        )
 
-        console.log(response2.data)
-        setInstructorCount(response2.data.firstName + ' ' + response2.data.lastName)
+        setInstructorCount(
+          response2.data.firstName + " " + response2.data.lastName
+        )
       }
 
       setIsFetchingInstructor(false)
@@ -143,7 +212,6 @@ const Dashboard = () => {
       setIsFetchingBranches(true)
       const response = await axios.get(`${process.env.REACT_APP_URL}/branches/`)
 
-      console.log(response)
       setIsFetchingBranches(false)
       setBranchesCount(response.data.length)
     }
@@ -152,29 +220,6 @@ const Dashboard = () => {
     fetchInstructors()
     fetchBranches()
   }, [branch])
-  // eslint-disable-next-line
-  const [chartData, setChartData] = useState({
-    labels: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    datasets: [
-      {
-        label: "Students",
-        data: [25, 50, 54, 69, 108, 86, 68, 79, 112, 45, 70, 60],
-      },
-    ],
-  })
   return (
     <>
       <Box display="flex">

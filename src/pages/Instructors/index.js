@@ -55,7 +55,7 @@ const Instructors = () => {
       <Card variant="outlined" sx={{ display: "inline-block", width: 250 }}>
         <CardContent sx={cardContentStyles}>
           <Typography variant="h6">
-            Total Instructors
+           {user.type == 'Admin' ? 'Total Instructors' : 'Instructor'}
             <Typography>
               {isFetching ? "Fetching..." : instructorCount}
             </Typography>

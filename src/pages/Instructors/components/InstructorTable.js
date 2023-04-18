@@ -499,21 +499,25 @@ export default function EnhancedTable() {
               </Box>
             </Box>
 
-            <Divider sx={{ marginTop: "24px" }} />
+            {user.type != "Student" && (
+              <>
+                <Divider sx={{ marginTop: "24px" }} />
 
-            <Box mt={"12px"} textAlign={"center"} mb={"12px"}>
-              <Box>
-                <Box>
-                  <Typography variant="h6">Students</Typography>
-                </Box>
-              </Box>
+                <Box mt={"12px"} textAlign={"center"} mb={"12px"}>
+                  <Box>
+                    <Box>
+                      <Typography variant="h6">Students</Typography>
+                    </Box>
+                  </Box>
 
-              {studentNames.map((student) => (
-                <Box>
-                  <Typography variant="p">{student}</Typography>
+                  {studentNames.map((student) => (
+                    <Box>
+                      <Typography variant="p">{student}</Typography>
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
+              </>
+            )}
 
             {user.type == "Admin" && (
               <>

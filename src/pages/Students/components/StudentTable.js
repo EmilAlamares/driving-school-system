@@ -25,6 +25,7 @@ import { BranchContext } from "../../../contexts/BranchContext"
 import { UserContext } from "../../../contexts/UserContext"
 import ManageBranchModal from "./ManageBranchModal"
 import ManageInstructorModal from "./ManageInstructorModal"
+import ManageSessionsModal from "./ManageSessionsModal"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -502,6 +503,9 @@ export default function EnhancedTable() {
                 </Box>
                 <Box>
                   <ManageInstructorModal branch={studentBranch} email={email} userId={userId} instructorName={instructorName}/>
+                </Box>
+                <Box>
+                  <ManageSessionsModal branch={studentBranch} email={email} userId={userId} instructorName={instructorName} />
                 </Box>
               </>
             )}

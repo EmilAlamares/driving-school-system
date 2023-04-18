@@ -6,7 +6,12 @@ const Chart = ({ chartData }) => {
   return (
     <Line
       data={chartData}
-      options={{ maintainAspectRatio: false }}
+      options={{
+        maintainAspectRatio: false,
+        // ticks: {
+        //   precision: 0,
+        // },
+      }}
     />
   )
 }
